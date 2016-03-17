@@ -1,4 +1,4 @@
-package com.tecnologiajo.diagnostictestsuniajc.modelos;
+package com.tecnologiajo.diagnostictestsuniajc;
 
 import android.os.Bundle;
 import android.os.CountDownTimer;
