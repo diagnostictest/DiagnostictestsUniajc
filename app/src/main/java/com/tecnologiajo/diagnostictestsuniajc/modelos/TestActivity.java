@@ -44,7 +44,7 @@ public class TestActivity extends AppCompatActivity {
         });*/
         timeTest = (TextView) findViewById(R.id.timeTest);
         viewAnimator = (ViewAnimator)findViewById(R.id.viewanimator);
-        relativeLayout = (RelativeLayout) findViewById(R.id.contenedor);
+
         slide_in_left = AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left);
         slide_out_right = AnimationUtils.loadAnimation(this, android.R.anim.slide_out_right);
 
@@ -56,7 +56,7 @@ public class TestActivity extends AppCompatActivity {
         CardView  cardview = new CardView(this);
         cardview.setPadding(2,2,2,2);
 
-        relativeLayout.addView(cardview);
+        //relativeLayout.addView(cardview);
         sincronizatedTest();
 
     }
