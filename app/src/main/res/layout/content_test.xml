@@ -64,6 +64,7 @@
                 android:layout_margin="10dp"
                 android:layout_height="70dp">
                 <TextView
+                    android:id="@+id/textquestion"
                     android:layout_width="wrap_content"
                     android:text="ddff"
                     android:layout_height="wrap_content" />
@@ -98,12 +99,18 @@
                         android:layout_width="?android:attr/listPreferredItemHeight"
                         android:layout_height="match_parent" />
                     <TextView
+                        android:id="@+id/txtQ1"
                         android:layout_width="match_parent"
                         android:text="ddff"
                         android:fontFamily="sans-serif-medium"
                         android:textColor="@android:color/white"
-                        android:textSize="25dp"
                         android:gravity="center"
+                        android:textSize="25sp"
+                        android:textStyle="bold"
+                        android:shadowColor="#8a6603"
+                        android:shadowDx="3"
+                        android:shadowDy="2"
+                        android:shadowRadius="1.8"
                         android:layout_toRightOf="@+id/img1"
                         android:layout_height="match_parent" />
                 </RelativeLayout>
@@ -120,11 +127,17 @@
                         android:layout_width="?android:attr/listPreferredItemHeight"
                         android:layout_height="match_parent" />
                     <TextView
+                        android:id="@+id/txtQ2"
                         android:layout_width="match_parent"
                         android:text="ddff"
                         android:fontFamily="sans-serif-medium"
                         android:textColor="@android:color/white"
-                        android:textSize="25dp"
+                        android:textSize="25sp"
+                        android:textStyle="bold"
+                        android:shadowColor="#8a6603"
+                        android:shadowDx="3"
+                        android:shadowDy="2"
+                        android:shadowRadius="1.8"
                         android:gravity="center"
                         android:layout_toRightOf="@+id/img2"
                         android:layout_height="match_parent" />
@@ -143,11 +156,17 @@
                         android:layout_width="?android:attr/listPreferredItemHeight"
                         android:layout_height="match_parent" />
                     <TextView
+                        android:id="@+id/txtQ3"
                         android:layout_width="match_parent"
                         android:text="ddff"
                         android:fontFamily="sans-serif-medium"
                         android:textColor="@android:color/white"
-                        android:textSize="25dp"
+                        android:textSize="25sp"
+                        android:textStyle="bold"
+                        android:shadowColor="#8a6603"
+                        android:shadowDx="3"
+                        android:shadowDy="2"
+                        android:shadowRadius="1.8"
                         android:gravity="center"
                         android:layout_toRightOf="@+id/img3"
                         android:layout_height="match_parent" />
@@ -167,11 +186,17 @@
                         android:layout_width="?android:attr/listPreferredItemHeight"
                         android:layout_height="match_parent" />
                     <TextView
+                        android:id="@+id/txtQ4"
                         android:layout_width="match_parent"
                         android:text="ddff"
                         android:fontFamily="sans-serif-medium"
                         android:textColor="@android:color/white"
-                        android:textSize="25dp"
+                        android:textSize="25sp"
+                        android:textStyle="bold"
+                        android:shadowColor="#8a6603"
+                        android:shadowDx="3"
+                        android:shadowDy="2"
+                        android:shadowRadius="1.8"
                         android:gravity="center"
                         android:layout_toRightOf="@+id/img4"
                         android:layout_height="match_parent" />
