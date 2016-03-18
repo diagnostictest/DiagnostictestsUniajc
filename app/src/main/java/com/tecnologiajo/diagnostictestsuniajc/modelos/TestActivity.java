@@ -68,13 +68,13 @@ public class TestActivity extends AppCompatActivity {
                 if(seleccion){
                     // cambiar de evaluacion
                     viewAnimator.showNext();
-                    //sincronizatedTest();
+                    sincronizatedTest();
                 }
             }
 
             public void onFinish() {
                 viewAnimator.showNext();
-                //sincronizatedTest();
+                sincronizatedTest();
             }
         }.start();
     }
