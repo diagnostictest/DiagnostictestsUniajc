@@ -46,11 +46,12 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
     private String docDocument="";
     /** json array para el grupo de respuestas */
     JSONArray jsonArray;
+    JSONArray jsonArrayResult;
     JSONObject jsonDiagnostico;
+    JSONObject jsonObject1;
     /** contador para las preguntas */
     private int next;
-    /** validacion de las respuestas */
-    private boolean[] flag = new boolean[3];
+    CountDownTimer countDownTimer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,23 +94,18 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
         // definir primera pregunta del test
 
         //relativeLayout.addView(cardview);
+        jsonArrayResult = new JSONArray();
 
     }
 
     public void sincronizatedTest(){
-        new CountDownTimer(30000, 1000) {
+        countDownTimer = new CountDownTimer(30000, 1000) {
             public void onTick(long millisUntilFinished) {
                 timeTest.setText(String.valueOf((millisUntilFinished/1000)));
-                if(seleccion){
-                    // cambiar de evaluacion
-                    viewAnimator.showNext();
-                    //sincronizatedTest();
-                }
             }
 
             public void onFinish() {
                 viewAnimator.showNext();
-                //sincronizatedTest();
             }
         }.start();
     }
@@ -117,54 +113,95 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
     public void asignarPreguntas(){
         try {
             sincronizatedTest();
-            jsonDiagnostico = new JSONObject(docDocument);
-            jsonArray = new JSONArray(jsonDiagnostico.getString("preguntas"));
-            JSONObject jsonObject1  = jsonArray.getJSONObject(next);
+            jsonObject1  = jsonArray.getJSONObject(next);
             textquestion.setText(jsonObject1.getString("descripcion"));
             JSONObject jsonObject2  = new JSONObject(jsonObject1.getString("respuesta1"));
             JSONObject jsonObject3  = new JSONObject(jsonObject1.getString("respuesta2"));
             JSONObject jsonObject4  = new JSONObject(jsonObject1.getString("respuesta3"));
+            JSONObject jsonObject5  = new JSONObject(jsonObject1.getString("respuesta4"));
             Q1.setText(jsonObject2.getString("descripcion"));
             Q2.setText(jsonObject3.getString("descripcion"));
             Q3.setText(jsonObject4.getString("descripcion"));
-            flag[0]=jsonObject2.getBoolean("flag");
-            flag[1]=jsonObject3.getBoolean("flag");
-            flag[2]=jsonObject4.getBoolean("flag");
-
-
+            Q4.setText(jsonObject5.getString("descripcion"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
     /** pasa a la siguiere pregunta */
     public void nextQuestion(View view){
-        if(next<4)
+        if(next<(jsonArray.length()-1)) {
             next++;
-        viewAnimator.showNext();
-        asignarPreguntas();
+            jsonArrayResult.put(jsonObject1);
+            asignarPreguntas();
+            viewAnimator.showNext();
+        }else{
+            try {
+                jsonDiagnostico.put("preguntas", jsonArrayResult);
+                createAlertDialog("Exception Occurred : " + jsonDiagnostico.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
     /** selecciona repuesta opcion 1 */
     public void Answer1(View view){
-        JSONObject jsonObject1  = null;
         try {
-            jsonObject1 = jsonArray.getJSONObject(next);
-            textquestion.setText(jsonObject1.getString("descripcion"));
             JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta1"));
+            jsonObject.put("selected", true);
+            if(jsonObject.getBoolean("flag")){
+
+            }
+            jsonObject1.put("respuesta1", jsonObject);
+            countDownTimer.cancel();
+            viewAnimator.showNext();
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
     /** selecciona repuesta opcion 1 */
     public void Answer2(View view){
+        try {
+            JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta2"));
+            jsonObject.put("selected", true);
+            if(jsonObject.getBoolean("flag")){
 
+            }
+            jsonObject1.put("respuesta2", jsonObject);
+            countDownTimer.cancel();
+            viewAnimator.showNext();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
     /** selecciona repuesta opcion 1 */
     public void Answer3(View view){
+        try {
+            JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta3"));
+            jsonObject.put("selected", true);
+            if(jsonObject.getBoolean("flag")){
 
+            }
+            jsonObject1.put("respuesta3", jsonObject);
+            countDownTimer.cancel();
+            viewAnimator.showNext();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
     /** selecciona repuesta opcion 1 */
     public void Answer4(View view){
+        try {
+            JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta4"));
+            jsonObject.put("selected", true);
+            if(jsonObject.getBoolean("flag")){
 
+            }
+            jsonObject1.put("respuesta4", jsonObject);
+            countDownTimer.cancel();
+            viewAnimator.showNext();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
     @Override
     public void onDocumentInserted(Storage response) {
@@ -178,8 +215,14 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
 
     @Override
     public void onFindDocSuccess(Storage response) {
-        createAlertDialog("Document SuccessFully Fetched : "+ response.getJsonDocList().get(0).getJsonDoc());
+
         docDocument=response.getJsonDocList().get(0).getJsonDoc();
+        try {
+            jsonDiagnostico = new JSONObject(docDocument);
+            jsonArray = new JSONArray(jsonDiagnostico.getString("preguntas"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         asignarPreguntas();
         progressDialog.dismiss();
     }
