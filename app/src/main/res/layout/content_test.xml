@@ -12,207 +12,209 @@
     <ViewAnimator
         android:id="@+id/viewanimator"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="match_parent" >
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="vertical"
             android:layout_height="match_parent">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:background="@color/colorPrimary"
-            android:layout_weight="10"
-            android:paddingBottom="0dp"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/myImageView"
-                android:layout_width="?android:attr/listPreferredItemHeight"
-                android:src="@drawable/clock"
-                android:layout_margin="5dp"
-                android:layout_height="100dp" />
-            <TextView android:id="@+id/timeTest"
-                android:layout_width="match_parent"
-                android:layout_alignLeft="@+id/myImageView"
-                android:layout_alignTop="@+id/myImageView"
-                android:layout_alignRight="@+id/myImageView"
-                android:layout_alignBottom="@+id/myImageView"
-                android:layout_margin="1dp"
-                android:gravity="center"
-                android:text="1"
-                android:textSize="25dp"
-                android:textColor="#000000"
-                android:layout_height="wrap_content"  />
-            <android.support.v7.widget.CardView
-                android:id="@+id/numbertest"
-                android:layout_width="?android:attr/listPreferredItemHeight"
-                android:layout_below="@+id/myImageView"
-                android:padding="10dp"
-                android:layout_margin="5dp"
-                android:layout_height="70dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:text="ddff"
-                    android:layout_height="wrap_content" />
-            </android.support.v7.widget.CardView>
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:id="@+id/contentquestion"
-                android:layout_alignBottom="@+id/numbertest"
-                android:layout_alignTop="@+id/myImageView"
-                android:layout_toRightOf="@+id/myImageView"
-                android:padding="10dp"
-                android:layout_marginBottom="0dp"
-                android:layout_margin="10dp"
-                android:layout_height="70dp">
-                <TextView
-                    android:id="@+id/textquestion"
-                    android:layout_width="wrap_content"
-                    android:text="ddff"
-                    android:layout_height="wrap_content" />
-            </android.support.v7.widget.CardView>
             <RelativeLayout
-                android:layout_below="@+id/timeTest"
-                android:id="@+id/contenedor"
-                android:layout_weight="50"
                 android:layout_width="match_parent"
+                android:background="@color/colorPrimary"
+                android:layout_weight="10"
+                android:paddingBottom="0dp"
                 android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/myImageView"
+                    android:layout_width="?android:attr/listPreferredItemHeight"
+                    android:src="@drawable/clock"
+                    android:layout_margin="5dp"
+                    android:layout_height="100dp" />
+                <TextView android:id="@+id/timeTest"
+                    android:layout_width="match_parent"
+                    android:layout_alignLeft="@+id/myImageView"
+                    android:layout_alignTop="@+id/myImageView"
+                    android:layout_alignRight="@+id/myImageView"
+                    android:layout_alignBottom="@+id/myImageView"
+                    android:layout_margin="1dp"
+                    android:gravity="center"
+                    android:text="1"
+                    android:textSize="25dp"
+                    android:textColor="#000000"
+                    android:layout_height="wrap_content"  />
+                <android.support.v7.widget.CardView
+                    android:id="@+id/numbertest"
+                    android:layout_width="?android:attr/listPreferredItemHeight"
+                    android:layout_below="@+id/myImageView"
+                    android:padding="10dp"
+                    android:layout_margin="5dp"
+                    android:layout_height="70dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="ddff"
+                        android:layout_height="wrap_content" />
+                </android.support.v7.widget.CardView>
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:id="@+id/contentquestion"
+                    android:layout_alignBottom="@+id/numbertest"
+                    android:layout_alignTop="@+id/myImageView"
+                    android:layout_toRightOf="@+id/myImageView"
+                    android:padding="10dp"
+                    android:layout_marginBottom="0dp"
+                    android:layout_margin="10dp"
+                    android:layout_height="70dp">
+                    <TextView
+                        android:id="@+id/textquestion"
+                        android:layout_width="wrap_content"
+                        android:text="ddff"
+                        android:layout_height="wrap_content" />
+                </android.support.v7.widget.CardView>
+                <RelativeLayout
+                    android:layout_below="@+id/timeTest"
+                    android:id="@+id/contenedor"
+                    android:layout_weight="50"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
+                </RelativeLayout>
             </RelativeLayout>
-        </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/question"
-            android:layout_width="match_parent"
-            android:background="@color/colorPrimaryDark"
-            android:layout_weight="90"
-            android:paddingTop="10dp"
-            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:id="@+id/question"
+                android:layout_width="match_parent"
+                android:background="@color/colorPrimaryDark"
+                android:layout_weight="90"
+                android:paddingTop="10dp"
+                android:layout_height="match_parent">
 
-                <RelativeLayout
-                    android:id="@+id/Q1"
-                    android:layout_margin="4dp"
-                    android:layout_width="match_parent"
-                    android:clickable="true"
-                    android:background="@drawable/red_button"
-                    android:layout_height="80dp">
-                    <ImageView
-                        android:id="@+id/img1"
-                        android:layout_width="?android:attr/listPreferredItemHeight"
-                        android:layout_height="match_parent" />
-                    <TextView
-                        android:id="@+id/txtQ1"
+                    <RelativeLayout
+                        android:id="@+id/Q1"
+                        android:layout_margin="4dp"
                         android:layout_width="match_parent"
-                        android:text="ddff"
-                        android:fontFamily="sans-serif-medium"
-                        android:textColor="@android:color/white"
-                        android:gravity="center"
-                        android:textSize="25sp"
-                        android:textStyle="bold"
-                        android:shadowColor="#8a6603"
-                        android:shadowDx="3"
-                        android:shadowDy="2"
-                        android:shadowRadius="1.8"
-                        android:layout_toRightOf="@+id/img1"
-                        android:layout_height="match_parent" />
-                </RelativeLayout>
-                <RelativeLayout
-                    android:id="@+id/Q2"
-                    android:layout_below="@+id/Q1"
-                    android:background="@drawable/green_button"
-                    android:layout_margin="4dp"
-                    android:clickable="true"
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp">
-                    <ImageView
-                        android:id="@+id/img2"
-                        android:layout_width="?android:attr/listPreferredItemHeight"
-                        android:layout_height="match_parent" />
-                    <TextView
-                        android:id="@+id/txtQ2"
+                        android:clickable="true"
+                        android:background="@drawable/red_button"
+                        android:layout_height="80dp">
+                        <ImageView
+                            android:id="@+id/img1"
+                            android:layout_width="?android:attr/listPreferredItemHeight"
+                            android:layout_height="match_parent" />
+                        <TextView
+                            android:id="@+id/txtQ1"
+                            android:layout_width="match_parent"
+                            android:text="ddff"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="@android:color/white"
+                            android:gravity="center"
+                            android:textSize="25sp"
+                            android:textStyle="bold"
+                            android:shadowColor="#8a6603"
+                            android:shadowDx="3"
+                            android:shadowDy="2"
+                            android:shadowRadius="1.8"
+                            android:layout_toRightOf="@+id/img1"
+                            android:layout_height="match_parent" />
+                    </RelativeLayout>
+                    <RelativeLayout
+                        android:id="@+id/Q2"
+                        android:layout_below="@+id/Q1"
+                        android:background="@drawable/green_button"
+                        android:layout_margin="4dp"
+                        android:clickable="true"
                         android:layout_width="match_parent"
-                        android:text="ddff"
-                        android:fontFamily="sans-serif-medium"
-                        android:textColor="@android:color/white"
-                        android:textSize="25sp"
-                        android:textStyle="bold"
-                        android:shadowColor="#8a6603"
-                        android:shadowDx="3"
-                        android:shadowDy="2"
-                        android:shadowRadius="1.8"
-                        android:gravity="center"
-                        android:layout_toRightOf="@+id/img2"
-                        android:layout_height="match_parent" />
-                </RelativeLayout>
+                        android:layout_height="80dp">
+                        <ImageView
+                            android:id="@+id/img2"
+                            android:layout_width="?android:attr/listPreferredItemHeight"
+                            android:layout_height="match_parent" />
+                        <TextView
+                            android:id="@+id/txtQ2"
+                            android:layout_width="match_parent"
+                            android:text="ddff"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="@android:color/white"
+                            android:textSize="25sp"
+                            android:textStyle="bold"
+                            android:shadowColor="#8a6603"
+                            android:shadowDx="3"
+                            android:shadowDy="2"
+                            android:shadowRadius="1.8"
+                            android:gravity="center"
+                            android:layout_toRightOf="@+id/img2"
+                            android:layout_height="match_parent" />
+                    </RelativeLayout>
 
-                <RelativeLayout
-                    android:id="@+id/Q3"
-                    android:layout_below="@+id/Q2"
-                    android:layout_margin="4dp"
-                    android:background="@drawable/blue_button"
-                    android:layout_width="match_parent"
-                    android:clickable="true"
-                    android:layout_height="80dp">
-                    <ImageView
-                        android:id="@+id/img3"
-                        android:layout_width="?android:attr/listPreferredItemHeight"
-                        android:layout_height="match_parent" />
-                    <TextView
-                        android:id="@+id/txtQ3"
+                    <RelativeLayout
+                        android:id="@+id/Q3"
+                        android:layout_below="@+id/Q2"
+                        android:layout_margin="4dp"
+                        android:background="@drawable/blue_button"
                         android:layout_width="match_parent"
-                        android:text="ddff"
-                        android:fontFamily="sans-serif-medium"
-                        android:textColor="@android:color/white"
-                        android:textSize="25sp"
-                        android:textStyle="bold"
-                        android:shadowColor="#8a6603"
-                        android:shadowDx="3"
-                        android:shadowDy="2"
-                        android:shadowRadius="1.8"
-                        android:gravity="center"
-                        android:layout_toRightOf="@+id/img3"
-                        android:layout_height="match_parent" />
-                </RelativeLayout>
+                        android:clickable="true"
+                        android:layout_height="80dp">
+                        <ImageView
+                            android:id="@+id/img3"
+                            android:layout_width="?android:attr/listPreferredItemHeight"
+                            android:layout_height="match_parent" />
+                        <TextView
+                            android:id="@+id/txtQ3"
+                            android:layout_width="match_parent"
+                            android:text="ddff"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="@android:color/white"
+                            android:textSize="25sp"
+                            android:textStyle="bold"
+                            android:shadowColor="#8a6603"
+                            android:shadowDx="3"
+                            android:shadowDy="2"
+                            android:shadowRadius="1.8"
+                            android:gravity="center"
+                            android:layout_toRightOf="@+id/img3"
+                            android:layout_height="match_parent" />
+                    </RelativeLayout>
 
 
-                <RelativeLayout
-                    android:id="@+id/Q4"
-                    android:layout_below="@+id/Q3"
-                    android:layout_width="match_parent"
-                    android:background="@drawable/orange_button"
-                    android:clickable="true"
-                    android:layout_margin="4dp"
-                    android:layout_height="80dp">
-                    <ImageView
-                        android:id="@+id/img4"
-                        android:layout_width="?android:attr/listPreferredItemHeight"
-                        android:layout_height="match_parent" />
-                    <TextView
-                        android:id="@+id/txtQ4"
+                    <RelativeLayout
+                        android:id="@+id/Q4"
+                        android:layout_below="@+id/Q3"
                         android:layout_width="match_parent"
-                        android:text="ddff"
-                        android:fontFamily="sans-serif-medium"
-                        android:textColor="@android:color/white"
-                        android:textSize="25sp"
-                        android:textStyle="bold"
-                        android:shadowColor="#8a6603"
-                        android:shadowDx="3"
-                        android:shadowDy="2"
-                        android:shadowRadius="1.8"
-                        android:gravity="center"
-                        android:layout_toRightOf="@+id/img4"
-                        android:layout_height="match_parent" />
-                </RelativeLayout>
-        </RelativeLayout>
+                        android:background="@drawable/orange_button"
+                        android:clickable="true"
+                        android:layout_margin="4dp"
+                        android:layout_height="80dp">
+                        <ImageView
+                            android:id="@+id/img4"
+                            android:layout_width="?android:attr/listPreferredItemHeight"
+                            android:layout_height="match_parent" />
+                        <TextView
+                            android:id="@+id/txtQ4"
+                            android:layout_width="match_parent"
+                            android:text="ddff"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="@android:color/white"
+                            android:textSize="25sp"
+                            android:textStyle="bold"
+                            android:shadowColor="#8a6603"
+                            android:shadowDx="3"
+                            android:shadowDy="2"
+                            android:shadowRadius="1.8"
+                            android:gravity="center"
+                            android:layout_toRightOf="@+id/img4"
+                            android:layout_height="match_parent" />
+                    </RelativeLayout>
+            </RelativeLayout>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="vertical"
+            android:background="#fcef00"
             android:layout_height="match_parent">
 
-            <View
-                android:layout_width="match_parent"
-                android:background="#fcef00"
-                android:layout_weight="50"
-                android:layout_height="wrap_content"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:text="Siguiente"
+                android:onClick="nextQuestion"
+                android:layout_height="wrap_content" />
+
         </LinearLayout>
     </ViewAnimator>
 </RelativeLayout>
