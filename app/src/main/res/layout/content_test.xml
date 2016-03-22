@@ -115,7 +115,9 @@
                         <ImageView
                             android:id="@+id/img1"
                             android:layout_width="?android:attr/listPreferredItemHeight"
-                            android:layout_height="match_parent" />
+                            android:layout_height="match_parent"
+                            android:src="@drawable/circulo"
+                             />
                         <TextView
                             android:id="@+id/txtQ1"
                             android:layout_width="match_parent"
@@ -144,6 +146,7 @@
                         <ImageView
                             android:id="@+id/img2"
                             android:layout_width="?android:attr/listPreferredItemHeight"
+                            android:src="@drawable/cuadrado"
                             android:layout_height="match_parent" />
                         <TextView
                             android:id="@+id/txtQ2"
@@ -174,6 +177,7 @@
                         <ImageView
                             android:id="@+id/img3"
                             android:layout_width="?android:attr/listPreferredItemHeight"
+                            android:src="@drawable/triangulo"
                             android:layout_height="match_parent" />
                         <TextView
                             android:id="@+id/txtQ3"
@@ -205,6 +209,8 @@
                         <ImageView
                             android:id="@+id/img4"
                             android:layout_width="?android:attr/listPreferredItemHeight"
+                            android:src="@drawable/xx"
+                            android:scaleType="fitCenter"
                             android:layout_height="match_parent" />
                         <TextView
                             android:id="@+id/txtQ4"
