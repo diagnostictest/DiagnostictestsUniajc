@@ -33,7 +33,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
 
     public boolean seleccion,finalizar;
     public ViewAnimator viewAnimator;
-    public TextView timeTest,textquestion,Q1,Q2,Q3,Q4;
+    public TextView timeTest,textquestion,Q1,Q2,Q3,Q4,itempregunta;
     public RelativeLayout relativeLayout;
     Animation slide_in_left, slide_out_right;
     /** The async service. */
@@ -73,7 +73,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
         Q2 =(TextView) findViewById(R.id.txtQ2);
         Q3 =(TextView) findViewById(R.id.txtQ3);
         Q4 =(TextView) findViewById(R.id.txtQ4);
-
+        itempregunta =(TextView) findViewById(R.id.idpregunta);
 
         timeTest = (TextView) findViewById(R.id.timeTest);
         viewAnimator = (ViewAnimator)findViewById(R.id.viewanimator);
@@ -92,7 +92,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
         progressDialog.setCancelable(true);
         asyncService.findDocByDocId(Constants.App42DBName, "diagnosticos", docId, this);
         // definir primera pregunta del test
-
+        itempregunta.setText("Q"+String.valueOf((next + 1)));
         //relativeLayout.addView(cardview);
         jsonArrayResult = new JSONArray();
 
@@ -131,6 +131,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
     public void nextQuestion(View view){
         if(next<(jsonArray.length()-1)) {
             next++;
+            itempregunta.setText("Q"+String.valueOf((next + 1)));
             jsonArrayResult.put(jsonObject1);
             asignarPreguntas();
             viewAnimator.showNext();
