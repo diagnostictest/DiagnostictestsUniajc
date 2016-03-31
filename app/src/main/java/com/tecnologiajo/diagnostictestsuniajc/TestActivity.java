@@ -3,6 +3,7 @@ package com.tecnologiajo.diagnostictestsuniajc;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
@@ -17,6 +18,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Animation;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
@@ -33,7 +37,11 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
 
     public boolean seleccion,finalizar;
     public ViewAnimator viewAnimator;
-    public TextView timeTest,textquestion,Q1,Q2,Q3,Q4,itempregunta;
+    public TextView timeTest,textquestion,Q1,Q2,Q3,Q4,itempregunta,txtnextlayout;
+    public ImageView imgnextlayout;
+    public Button btnnextlayout;
+    public LinearLayout nextlayout;
+
     public RelativeLayout relativeLayout;
     Animation slide_in_left, slide_out_right;
     /** The async service. */
@@ -74,8 +82,12 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
         Q3 =(TextView) findViewById(R.id.txtQ3);
         Q4 =(TextView) findViewById(R.id.txtQ4);
         itempregunta =(TextView) findViewById(R.id.idpregunta);
-
+        txtnextlayout =(TextView) findViewById(R.id.txtnextlayout);
         timeTest = (TextView) findViewById(R.id.timeTest);
+
+        imgnextlayout = (ImageView) findViewById(R.id.imgnextlayout);
+        btnnextlayout = (Button) findViewById(R.id.btnnextlayout);
+        nextlayout = (LinearLayout) findViewById(R.id.nextlayout);
         viewAnimator = (ViewAnimator)findViewById(R.id.viewanimator);
 
         slide_in_left = AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left);
@@ -105,6 +117,9 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             }
 
             public void onFinish() {
+                txtnextlayout.setText("Incorrecto!");
+                imgnextlayout.setImageResource(R.drawable.xx);
+                nextlayout.setBackgroundColor(Color.parseColor("#FFF20404"));
                 viewAnimator.showNext();
             }
         }.start();
@@ -150,7 +165,13 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta1"));
             jsonObject.put("selected", true);
             if(jsonObject.getBoolean("flag")){
-
+                txtnextlayout.setText("Correcto!");
+                imgnextlayout.setImageResource(R.drawable.tick);
+                nextlayout.setBackgroundColor(Color.parseColor("#FF1A831A"));
+            }else{
+                txtnextlayout.setText("Incorrecto!");
+                imgnextlayout.setImageResource(R.drawable.xx);
+                nextlayout.setBackgroundColor(Color.parseColor("#FFF20404"));
             }
             jsonObject1.put("respuesta1", jsonObject);
             countDownTimer.cancel();
@@ -165,7 +186,12 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta2"));
             jsonObject.put("selected", true);
             if(jsonObject.getBoolean("flag")){
-
+                txtnextlayout.setText("Correcto!");
+                imgnextlayout.setImageResource(R.drawable.tick);
+                nextlayout.setBackgroundColor(Color.parseColor("#FF1A831A"));
+            }else {
+                txtnextlayout.setText("Incorrecto!");
+                nextlayout.setBackgroundColor(Color.parseColor("#FFF20404"));
             }
             jsonObject1.put("respuesta2", jsonObject);
             countDownTimer.cancel();
@@ -180,7 +206,12 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta3"));
             jsonObject.put("selected", true);
             if(jsonObject.getBoolean("flag")){
-
+                txtnextlayout.setText("Correcto!");
+                imgnextlayout.setImageResource(R.drawable.tick);
+                nextlayout.setBackgroundColor(Color.parseColor("#FF1A831A"));
+            }else{
+                txtnextlayout.setText("Incorrecto!");
+                nextlayout.setBackgroundColor(Color.parseColor("#FFF20404"));
             }
             jsonObject1.put("respuesta3", jsonObject);
             countDownTimer.cancel();
@@ -195,7 +226,12 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta4"));
             jsonObject.put("selected", true);
             if(jsonObject.getBoolean("flag")){
-
+                txtnextlayout.setText("Correcto!");
+                imgnextlayout.setImageResource(R.drawable.tick);
+                nextlayout.setBackgroundColor(Color.parseColor("#FF1A831A"));
+            }else{
+                txtnextlayout.setText("Incorrecto!");
+                nextlayout.setBackgroundColor(Color.parseColor("#FFF20404"));
             }
             jsonObject1.put("respuesta4", jsonObject);
             countDownTimer.cancel();
