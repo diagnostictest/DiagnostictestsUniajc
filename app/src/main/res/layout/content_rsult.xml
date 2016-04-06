@@ -12,4 +12,22 @@
     tools:context="com.tecnologiajo.diagnostictestsuniajc.RsultActivity"
     tools:showIn="@layout/activity_rsult">
 
+
+    <FrameLayout
+        android:id="@+id/displayhistorial"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2" >
+
+    </FrameLayout>
+
+
+    <FrameLayout
+        android:id="@+id/displayDetail"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3" >
+
+    </FrameLayout>
+
 </RelativeLayout>

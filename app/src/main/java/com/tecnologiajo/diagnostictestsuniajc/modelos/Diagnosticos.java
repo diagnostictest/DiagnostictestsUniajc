@@ -15,10 +15,10 @@ import java.util.List;
 public class Diagnosticos extends SQLiteOpenHelper {
     private static final int VERSION_BASEDATOS = 1;
     // Nombre de nuestro archivo de base de datos
-    private static final String NOMBRE_BASEDATOS = "daignostictest.db";
+    private static final String NOMBRE_BASEDATOS = "diagnostictest.db";
     // Sentencia SQL para la creación de una tabla
     private static final String TABLA_DIAGNOSTICOS = "CREATE TABLE diagnostico" +
-            "(_id VARCHAR(100) PRIMARY KEY, JSONDiagnostico  TEXT)";
+            "(id  PRIMARY KEY,_id VARCHAR(100), JSONDiagnostico  TEXT)";
     public Diagnosticos(Context context) {
         super(context, NOMBRE_BASEDATOS, null, VERSION_BASEDATOS);
     }
@@ -33,10 +33,11 @@ public class Diagnosticos extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLA_DIAGNOSTICOS);
         onCreate(db);
     }
-    public void insertarDIAGNOSTICOS(int id, String JSONDoc) {
+    public void insertarDIAGNOSTICOS(String id, String JSONDoc) {
         SQLiteDatabase db = getWritableDatabase();
         if(db != null){
             ContentValues valores = new ContentValues();
+            valores.put("id",nextDIAGNOSTICOS());
             valores.put("_id", id);
             valores.put("JSONDiagnostico", JSONDoc);
             db.insert("diagnostico", null, valores);
@@ -44,7 +45,7 @@ public class Diagnosticos extends SQLiteOpenHelper {
         }
     }
 
-    public void modificarDIAGNOSTICOS(int id, String JSONDoc){
+    public void modificarDIAGNOSTICOS(String id, String JSONDoc){
         SQLiteDatabase db = getWritableDatabase();
         ContentValues valores = new ContentValues();
         valores.put("_id", id);
@@ -53,7 +54,7 @@ public class Diagnosticos extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void borrarDIAGNOSTICOS(int id) {
+    public void borrarDIAGNOSTICOS(String id) {
         SQLiteDatabase db = getWritableDatabase();
         db.delete("diagnostico", "_id=" + id, null);
         db.close();
@@ -76,11 +77,11 @@ public class Diagnosticos extends SQLiteOpenHelper {
         return diagnostico;
     }
 
-    public List<Diagnostico> recuperarDIAGNOSTICOSS() {
+    public List<Diagnostico> recuperarDIAGNOSTICOS() {
         SQLiteDatabase db = getReadableDatabase();
         List<Diagnostico> lista_negocios = new ArrayList<Diagnostico>();
         String[] valores_recuperar = {"_id", "JSONDiagnostico"};
-        Cursor c = db.query("negocios", valores_recuperar, null, null, null, null, null, null);
+        Cursor c = db.query("diagnostico", valores_recuperar, null, null, null, null, null, null);
         if(c.getCount()>0) {
             c.moveToFirst();
             do {
@@ -93,5 +94,13 @@ public class Diagnosticos extends SQLiteOpenHelper {
         db.close();
         c.close();
         return lista_negocios;
+    }
+
+    public int nextDIAGNOSTICOS() {
+        SQLiteDatabase db = getReadableDatabase();
+        List<Diagnostico> lista_negocios = new ArrayList<Diagnostico>();
+        String[] valores_recuperar = {"_id", "JSONDiagnostico"};
+        Cursor c = db.query("diagnostico", valores_recuperar, null, null, null, null, null, null);
+        return ((c.getCount()>0)?c.getCount()+1:1);
     }
 }

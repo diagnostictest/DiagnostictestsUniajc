@@ -6,16 +6,10 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
+
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
+
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Animation;
 import android.widget.Button;
@@ -27,7 +21,8 @@ import android.widget.ViewAnimator;
 
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
-import com.tecnologiajo.diagnostictestsuniajc.R;
+
+import com.tecnologiajo.diagnostictestsuniajc.modelos.Diagnosticos;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,6 +43,8 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
     private AsyncApp42ServiceApi asyncService;
     /** The progress dialog. */
     private ProgressDialog progressDialog;
+    /** The id . */
+    private String Id = "";
     /** The doc id. */
     private String docId = "56e0c3cae4b0e89150c63cba";
     /** resive el documento json devuelto del servicio */
@@ -64,17 +61,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
-        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
 
         textquestion =(TextView) findViewById(R.id.textquestion);
         Q1 =(TextView) findViewById(R.id.txtQ1);
@@ -153,6 +140,8 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
         }else{
             try {
                 jsonDiagnostico.put("preguntas", jsonArrayResult);
+                Diagnosticos diagnosticos= new Diagnosticos(this);
+                diagnosticos.insertarDIAGNOSTICOS(Id,jsonDiagnostico.toString());
                 createAlertDialog("Exception Occurred : " + jsonDiagnostico.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -254,6 +243,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
     public void onFindDocSuccess(Storage response) {
 
         docDocument=response.getJsonDocList().get(0).getJsonDoc();
+        Id = response.getJsonDocList().get(0).getDocId();
         try {
             jsonDiagnostico = new JSONObject(docDocument);
             jsonArray = new JSONArray(jsonDiagnostico.getString("preguntas"));
