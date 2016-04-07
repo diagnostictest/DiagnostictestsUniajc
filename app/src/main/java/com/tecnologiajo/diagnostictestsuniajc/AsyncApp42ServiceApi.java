@@ -371,6 +371,36 @@ public class AsyncApp42ServiceApi {
 		}.start();
 	}
 
+    /*
+     * This function Find JSON Document By KeyValue.
+     */
+    public void findAllDocs(final String dbName, final String collectionName, final App42StorageServiceListener callBack) {
+        final Handler callerThreadHandler = new Handler();
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    final Storage response = storageService.findAllDocuments(dbName, collectionName);
+                    callerThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callBack.onFindDocSuccess(response);
+                        }
+                    });
+                } catch (final App42Exception ex) {
+                    callerThreadHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (callBack != null) {
+                                callBack.onFindDocFailed(ex);
+                            }
+                        }
+                    });
+                }
+            }
+        }.start();
+    }
+
 	/**
 	 * Update doc by key value.
 	 *
