@@ -13,6 +13,7 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.shephertz.app42.paas.sdk.android.App42API;
+import com.shephertz.app42.paas.sdk.android.App42CacheManager;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.game.Game;
 import com.shephertz.app42.paas.sdk.android.game.ScoreBoardService;
@@ -53,6 +54,8 @@ public class AsyncApp42ServiceApi {
 	 */
 	private AsyncApp42ServiceApi(Context context) {
 		App42API.initialize(context, Constants.App42ApiKey, Constants.App42ApiSecret);
+		App42CacheManager.setPolicy(App42CacheManager.Policy.CACHE_FIRST);
+		App42API.setOfflineStorage(true);
 		this.userService = App42API.buildUserService();
 		this.storageService = App42API.buildStorageService();
 		this.scoreBoardService = App42API.buildScoreBoardService();
