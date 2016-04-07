@@ -1,5 +1,7 @@
 package com.tecnologiajo.diagnostictestsuniajc.modelos;
 
+import android.graphics.drawable.Drawable;
+
 /**
  * Created by estudiante308 on 09/03/2016.
  */
@@ -7,6 +9,7 @@ public class Asignatura {
     private String id;
     private String nombre;
     private String descripcion;
+    private Drawable drawable;
 
     public Asignatura() {
     }
@@ -39,5 +42,13 @@ public class Asignatura {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public Drawable getDrawable() {
+        return drawable;
+    }
+
+    public void setDrawable(Drawable drawable) {
+        this.drawable = drawable;
     }
 }
