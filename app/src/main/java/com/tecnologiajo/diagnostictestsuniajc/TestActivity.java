@@ -241,17 +241,21 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
 
     @Override
     public void onFindDocSuccess(Storage response) {
-
-        docDocument=response.getJsonDocList().get(0).getJsonDoc();
-        Id = response.getJsonDocList().get(0).getDocId();
-        try {
-            jsonDiagnostico = new JSONObject(docDocument);
-            jsonArray = new JSONArray(jsonDiagnostico.getString("preguntas"));
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if(response.isFromCache()){
+            createAlertDialog("Sin conexion : ");
+        }else{
+            docDocument=response.getJsonDocList().get(0).getJsonDoc();
+            Id = response.getJsonDocList().get(0).getDocId();
+            try {
+                jsonDiagnostico = new JSONObject(docDocument);
+                jsonArray = new JSONArray(jsonDiagnostico.getString("preguntas"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            asignarPreguntas();
+            progressDialog.dismiss();
         }
-        asignarPreguntas();
-        progressDialog.dismiss();
+
     }
 
     @Override

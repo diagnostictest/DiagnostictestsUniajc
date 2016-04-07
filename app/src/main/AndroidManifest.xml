@@ -32,6 +32,14 @@
             android:name=".RsultActivity"
             android:label="@string/title_activity_rsult"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <receiver android:name="com.shephertz.app42.paas.sdk.android.App42BroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.shephertz.app42.paas.sdk.android.AlarmReceiver"/>
+        <service android:name="com.shephertz.app42.paas.sdk.android.App42DataSyncService"/>
     </application>
 
 </manifest>
