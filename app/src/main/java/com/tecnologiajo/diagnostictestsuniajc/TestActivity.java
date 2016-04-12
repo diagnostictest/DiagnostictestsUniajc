@@ -133,16 +133,20 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
     public void nextQuestion(View view){
         if(next<(jsonArray.length()-1)) {
             next++;
-            itempregunta.setText("Q"+String.valueOf((next + 1)));
+            itempregunta.setText("Q" + String.valueOf((next + 1)));
             jsonArrayResult.put(jsonObject1);
             asignarPreguntas();
             viewAnimator.showNext();
+
         }else{
             try {
+                jsonArrayResult.put(jsonObject1);
                 jsonDiagnostico.put("preguntas", jsonArrayResult);
-                Diagnosticos diagnosticos= new Diagnosticos(this);
-                diagnosticos.insertarDIAGNOSTICOS(Id,jsonDiagnostico.toString());
-                createAlertDialog("Exception Occurred : " + jsonDiagnostico.toString());
+                jsonDiagnostico.put("id_usuario","");
+
+                progressDialog = ProgressDialog.show(this, "", "Input..");
+                progressDialog.setCancelable(true);
+                asyncService.insertJSONDoc(Constants.App42DBName,"historial",jsonDiagnostico,this);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -231,6 +235,20 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
     }
     @Override
     public void onDocumentInserted(Storage response) {
+        if(response.isFromCache()){
+            Diagnosticos diagnosticos= new Diagnosticos(this);
+            try {
+                jsonDiagnostico.put("registrado",false);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            diagnosticos.insertarDIAGNOSTICOS(Id, jsonDiagnostico.toString());
+            createAlertDialog("Se Almaceno temporalmente en su memoria : " + jsonDiagnostico.toString());
+            progressDialog.dismiss();
+        }else{
+            createAlertDialog("Se Almaceno correctamente : " + jsonDiagnostico.toString());
+            progressDialog.dismiss();
+        }
 
     }
 
@@ -242,8 +260,6 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
     @Override
     public void onFindDocSuccess(Storage response) {
         if(response.isFromCache()){
-            createAlertDialog("Sin conexion : ");
-        }else{
             docDocument=response.getJsonDocList().get(0).getJsonDoc();
             Id = response.getJsonDocList().get(0).getDocId();
             try {
@@ -254,13 +270,18 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             }
             asignarPreguntas();
             progressDialog.dismiss();
+
+        }else{
+            createAlertDialog("Sin conexion : ");
+            progressDialog.dismiss();
         }
 
     }
 
     @Override
     public void onInsertionFailed(App42Exception ex) {
-
+        progressDialog.dismiss();
+        createAlertDialog("Exception Occurred : "+ ex.getMessage());
     }
 
     @Override

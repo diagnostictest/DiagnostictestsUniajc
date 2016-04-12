@@ -3,33 +3,46 @@ package com.tecnologiajo.diagnostictestsuniajc;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
+import com.tecnologiajo.diagnostictestsuniajc.modelos.Asignature;
+import com.tecnologiajo.diagnostictestsuniajc.modelos.Diagnostico;
 
-public class MainActivity extends AppCompatActivity implements AsyncApp42ServiceApi.App42StorageServiceListener {
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42ServiceApi.App42StorageServiceListener {
     /** The async service. */
     private AsyncApp42ServiceApi asyncService;
     /** The progress dialog. */
     private ProgressDialog progressDialog;
     /** The doc id. */
     private String docId = "";
+    private ListView listDianostic;
+    private DrawableProvider mProvider;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_diagnostics);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         asyncService = AsyncApp42ServiceApi.instance(this);
+        mProvider = new DrawableProvider(this);
+        listDianostic = (ListView) findViewById(R.id.listDiagnoostics);
         // temporal
         progressDialog = ProgressDialog.show(this, "", "Searching..");
         progressDialog.setCancelable(true);
-        asyncService.findDocByKeyValue(Constants.App42DBName, Constants.CollectionName, "nombre", "Matematica 1", this);
+        asyncService.findDocByKeyValue(Constants.App42DBName, "diagnosticos", "id_creator", "56e0c193e4b0048ca90af2f6", this);
     }
 
     @Override
@@ -66,7 +79,26 @@ public class MainActivity extends AppCompatActivity implements AsyncApp42Service
 
     @Override
     public void onFindDocSuccess(Storage response) {
-        createAlertDialog("Document SuccessFully Fetched : "+ response.getJsonDocList().get(0).getJsonDoc());
+        progressDialog.dismiss();
+        ArrayList<Storage.JSONDocument> jsonDocList = response.getJsonDocList();
+        List<Diagnostico> convertList = new ArrayList<>();
+        try {
+            for (int i = 0; i < jsonDocList.size(); i++) {
+                Storage.JSONDocument jsonDocument = jsonDocList.get(i);
+                String docId = jsonDocument.getDocId();
+                JSONObject jsonObject = new JSONObject(jsonDocument.getJsonDoc());
+                Diagnostico diagnostico = new Diagnostico();
+                diagnostico.setId(docId);
+                diagnostico.setDescripcion(jsonObject.getString("descripcion"));
+                Drawable drawable = mProvider.getRoundWithBorder(diagnostico.getDescripcion().substring(0,1).toUpperCase());
+                diagnostico.setDrawable(drawable);
+                convertList.add(diagnostico);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        DiagnosticsAdapter diagnosticsAdapter = new DiagnosticsAdapter(this, 0, convertList);
+        listDianostic.setAdapter(diagnosticsAdapter);
     }
 
     @Override
@@ -92,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements AsyncApp42Service
      */
     public void createAlertDialog(String msg) {
         AlertDialog.Builder alertbox = new AlertDialog.Builder(
-                MainActivity.this);
+                DiagnosticsActivity.this);
         alertbox.setTitle("Response Message");
         alertbox.setMessage(msg);
         alertbox.setPositiveButton("Ok", new DialogInterface.OnClickListener() {

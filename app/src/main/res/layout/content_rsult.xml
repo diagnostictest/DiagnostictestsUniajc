@@ -4,30 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.tecnologiajo.diagnostictestsuniajc.RsultActivity"
     tools:showIn="@layout/activity_rsult">
 
 
     <FrameLayout
-        android:id="@+id/displayhistorial"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="2" >
-
+        android:id="@+id/display"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     </FrameLayout>
 
-
-    <FrameLayout
-        android:id="@+id/displayDetail"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="3" >
-
-    </FrameLayout>
 
 </RelativeLayout>

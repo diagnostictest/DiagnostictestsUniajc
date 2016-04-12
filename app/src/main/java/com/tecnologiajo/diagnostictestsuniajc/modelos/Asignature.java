@@ -5,16 +5,16 @@ import android.graphics.drawable.Drawable;
 /**
  * Created by estudiante308 on 09/03/2016.
  */
-public class Asignatura {
+public class Asignature {
     private String id;
     private String nombre;
     private String descripcion;
     private Drawable drawable;
 
-    public Asignatura() {
+    public Asignature() {
     }
 
-    public Asignatura(String id, String nombre, String descripcion) {
+    public Asignature(String id, String nombre, String descripcion) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;

@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
-import com.tecnologiajo.diagnostictestsuniajc.modelos.Asignatura;
+import com.tecnologiajo.diagnostictestsuniajc.modelos.Asignature;
 
 import org.json.JSONObject;
 
@@ -88,17 +88,17 @@ public class AsignatureActivity extends AppCompatActivity implements AsyncApp42S
     public void onFindDocSuccess(Storage response) {
         progressDialog.dismiss();
         ArrayList<Storage.JSONDocument> jsonDocList = response.getJsonDocList();
-        List<Asignatura> convertList = new ArrayList<>();
+        List<Asignature> convertList = new ArrayList<>();
         try {
             for (int i = 0; i < jsonDocList.size(); i++) {
                 Storage.JSONDocument jsonDocument = jsonDocList.get(i);
                 String docId = jsonDocument.getDocId();
                 String nombre = new JSONObject(jsonDocument.getJsonDoc()).getString("nombre");
                 String descripcion = new JSONObject(jsonDocument.getJsonDoc()).getString("descripcion");
-                Asignatura asignatura = new Asignatura(docId, nombre, descripcion);
-                Drawable drawable = mProvider.getRoundWithBorder(asignatura.getDescripcion().substring(0,1).toUpperCase());
-                asignatura.setDrawable(drawable);
-                convertList.add(asignatura);
+                Asignature asignature = new Asignature(docId, nombre, descripcion);
+                Drawable drawable = mProvider.getRoundWithBorder(asignature.getDescripcion().substring(0,1).toUpperCase());
+                asignature.setDrawable(drawable);
+                convertList.add(asignature);
             }
         }catch (Exception e){
             e.printStackTrace();

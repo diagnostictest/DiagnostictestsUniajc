@@ -11,20 +11,20 @@ import android.widget.TextView;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.tecnologiajo.diagnostictestsuniajc.modelos.Asignature;
+import com.tecnologiajo.diagnostictestsuniajc.modelos.Diagnostico;
 
 import java.util.List;
 
 /**
- * Created by iptapps on 6/04/16.
+ * Created by ADMIN on 12/04/2016.
  */
-public class AsignatureAdapter extends ArrayAdapter<Asignature> {
-
+public class DiagnosticsAdapter extends ArrayAdapter<Diagnostico> {
     // declare the color generator and drawable builder
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
     private TextDrawable.IBuilder mDrawableBuilder;
     private Context contextAdapter;
 
-    public AsignatureAdapter(Context context, int resource, List objects) {
+    public DiagnosticsAdapter(Context context, int resource, List objects) {
         super(context, resource, objects);
         contextAdapter = context;
         mDrawableBuilder = TextDrawable.builder()
@@ -45,11 +45,11 @@ public class AsignatureAdapter extends ArrayAdapter<Asignature> {
         }
 
         // Get the data item for this position
-        final Asignature asignature = getItem(position);
+        final Diagnostico diagnostico = getItem(position);
 
-        final Drawable drawable = asignature.getDrawable();
+        final Drawable drawable = diagnostico.getDrawable();
         viewHolder.imageView.setImageDrawable(drawable);
-        viewHolder.textView.setText(asignature.getDescripcion());
+        viewHolder.textView.setText(diagnostico.getDescripcion());
 
         viewHolder.textView.setCompoundDrawablesWithIntrinsicBounds(null,
                 null,

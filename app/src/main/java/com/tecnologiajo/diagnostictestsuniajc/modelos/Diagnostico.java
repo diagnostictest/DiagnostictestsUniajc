@@ -1,5 +1,7 @@
 package com.tecnologiajo.diagnostictestsuniajc.modelos;
 
+import android.graphics.drawable.Drawable;
+
 /**
  * Created by estudiante308 on 09/03/2016.
  */
@@ -9,6 +11,7 @@ public class Diagnostico {
     private String descripcion;
     private String id_creator;
     private String preguntas;
+    private Drawable drawable;
 
     public Diagnostico() {
     }
@@ -59,5 +62,13 @@ public class Diagnostico {
 
     public void setPreguntas(String preguntas) {
         this.preguntas = preguntas;
+    }
+
+    public Drawable getDrawable() {
+        return drawable;
+    }
+
+    public void setDrawable(Drawable drawable) {
+        this.drawable = drawable;
     }
 }

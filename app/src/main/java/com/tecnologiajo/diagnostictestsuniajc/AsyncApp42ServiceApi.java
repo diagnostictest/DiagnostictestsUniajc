@@ -195,6 +195,8 @@ public class AsyncApp42ServiceApi {
 		}.start();
 	}
 
+
+
 	/**
 	 * The listener interface for receiving app42UserService events.
 	 * The class that is interested in processing a app42UserService
@@ -342,7 +344,7 @@ public class AsyncApp42ServiceApi {
 	/*
 	 * This function Find JSON Document By KeyValue.
 	 */
-	public void findDocByKeyValue(final String dbName, final String collectionName,
+	public void findDocByKeyValueLike(final String dbName, final String collectionName,
 							   final String key,final String value, final App42StorageServiceListener callBack) {
 		final Handler callerThreadHandler = new Handler();
 		new Thread() {
@@ -351,6 +353,46 @@ public class AsyncApp42ServiceApi {
 				try {
 					Query q1 = QueryBuilder.build(key, value, QueryBuilder.Operator.LIKE);
 					final Storage response = storageService.findDocumentsByQuery(dbName, collectionName, q1);
+					callerThreadHandler.post(new Runnable() {
+						@Override
+						public void run() {
+							callBack.onFindDocSuccess(response);
+						}
+					});
+				} catch (final App42Exception ex) {
+					callerThreadHandler.post(new Runnable() {
+						@Override
+						public void run() {
+							if (callBack != null) {
+								callBack.onFindDocFailed(ex);
+							}
+						}
+					});
+				}
+			}
+		}.start();
+	}
+
+	/**
+	 * Find doc by doc id.
+	 *
+	 * @param dbName the db name
+	 * @param collectionName the collection name
+	 * @param key the doc id
+	 * @param value the doc id
+	 * @param callBack the call back
+	 */
+	/*
+	 * This function Find JSON Document By KeyValue.
+	 */
+	public void findDocByKeyValue(final String dbName, final String collectionName,
+								  final String key,final String value, final App42StorageServiceListener callBack) {
+		final Handler callerThreadHandler = new Handler();
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					final Storage response = storageService.findDocumentByKeyValue(dbName, collectionName,key,value);
 					callerThreadHandler.post(new Runnable() {
 						@Override
 						public void run() {

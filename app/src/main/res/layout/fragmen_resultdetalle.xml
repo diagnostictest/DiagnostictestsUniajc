@@ -4,7 +4,7 @@
         android:layout_width="match_parent"
         android:background="@color/colorPrimaryDark"
         android:layout_weight="10"
-        android:paddingTop="10dp"
+        android:paddingTop="0dp"
         android:layout_height="match_parent">
 
         <RelativeLayout
@@ -12,9 +12,8 @@
             android:layout_margin="4dp"
             android:layout_width="match_parent"
             android:clickable="true"
-            android:onClick="Answer1"
             android:background="@drawable/red_button"
-            android:layout_height="150dp">
+            android:layout_height="160dp">
             <ImageView
                 android:id="@+id/img1"
                 android:layout_width="?android:attr/listPreferredItemHeight"
@@ -43,10 +42,8 @@
             android:layout_below="@+id/Q1"
             android:background="@drawable/white_button"
             android:layout_margin="4dp"
-            android:clickable="true"
-            android:onClick="Answer2"
             android:layout_width="match_parent"
-            android:layout_height="80dp">
+            android:layout_height="70dp">
             <ImageView
                 android:id="@+id/img2"
                 android:layout_width="?android:attr/listPreferredItemHeight"
@@ -76,8 +73,7 @@
             android:background="@drawable/white_button"
             android:layout_width="match_parent"
             android:clickable="true"
-            android:onClick="Answer3"
-            android:layout_height="80dp">
+            android:layout_height="70dp">
             <ImageView
                 android:id="@+id/img3"
                 android:layout_width="?android:attr/listPreferredItemHeight"
@@ -106,9 +102,8 @@
             android:layout_width="match_parent"
             android:background="@drawable/white_button"
             android:clickable="true"
-            android:onClick="Answer4"
             android:layout_margin="4dp"
-            android:layout_height="80dp">
+            android:layout_height="70dp">
             <ImageView
                 android:id="@+id/img4"
                 android:layout_width="?android:attr/listPreferredItemHeight"
@@ -133,14 +128,13 @@
         </RelativeLayout>
 
         <RelativeLayout
-        android:id="@+id/Q5"
-        android:layout_below="@+id/Q4"
-        android:layout_width="match_parent"
-        android:background="@drawable/white_button"
-        android:clickable="true"
-        android:onClick="Answer4"
-        android:layout_margin="4dp"
-        android:layout_height="80dp">
+            android:id="@+id/Q5"
+            android:layout_below="@+id/Q4"
+            android:layout_width="match_parent"
+            android:background="@drawable/white_button"
+            android:clickable="true"
+            android:layout_margin="4dp"
+            android:layout_height="70dp">
         <ImageView
             android:id="@+id/img5"
             android:layout_width="?android:attr/listPreferredItemHeight"
