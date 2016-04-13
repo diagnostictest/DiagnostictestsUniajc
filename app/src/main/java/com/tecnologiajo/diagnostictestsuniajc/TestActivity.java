@@ -46,7 +46,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
     /** The id . */
     private String Id = "";
     /** The doc id. */
-    private String docId = "56e0c3cae4b0e89150c63cba";
+    private String docId = "";
     /** resive el documento json devuelto del servicio */
     private String docDocument="";
     /** json array para el grupo de respuestas */
@@ -82,11 +82,16 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
 
         viewAnimator.setInAnimation(slide_in_left);
         viewAnimator.setOutAnimation(slide_out_right);
+
         seleccion=false;
         finalizar=false;
         next=0;
+
         asyncService = AsyncApp42ServiceApi.instance(this);
         // temporal
+
+        docId= getIntent().getExtras().getString("id","");
+
         progressDialog = ProgressDialog.show(this, "", "Searching..");
         progressDialog.setCancelable(true);
         asyncService.findDocByDocId(Constants.App42DBName, "diagnosticos", docId, this);

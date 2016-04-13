@@ -1,12 +1,15 @@
 package com.tecnologiajo.diagnostictestsuniajc;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -34,6 +37,7 @@ public class AsignatureActivity extends AppCompatActivity implements AsyncApp42S
     private ProgressDialog progressDialog;
 
     private ListView listAsignatures;
+
     private DrawableProvider mProvider;
 
     @Override
@@ -42,6 +46,8 @@ public class AsignatureActivity extends AppCompatActivity implements AsyncApp42S
         setContentView(R.layout.activity_asignature);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
         asyncService = AsyncApp42ServiceApi.instance(this);
         mProvider = new DrawableProvider(this);
         listAsignatures = (ListView) findViewById(R.id.listAsignatures);
@@ -88,7 +94,7 @@ public class AsignatureActivity extends AppCompatActivity implements AsyncApp42S
     public void onFindDocSuccess(Storage response) {
         progressDialog.dismiss();
         ArrayList<Storage.JSONDocument> jsonDocList = response.getJsonDocList();
-        List<Asignature> convertList = new ArrayList<>();
+        final List<Asignature> convertList = new ArrayList<>();
         try {
             for (int i = 0; i < jsonDocList.size(); i++) {
                 Storage.JSONDocument jsonDocument = jsonDocList.get(i);
@@ -105,6 +111,14 @@ public class AsignatureActivity extends AppCompatActivity implements AsyncApp42S
         }
         AsignatureAdapter asignatureAdapter = new AsignatureAdapter(this, 0, convertList);
         listAsignatures.setAdapter(asignatureAdapter);
+        listAsignatures.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getApplicationContext(),DiagnosticsActivity.class);
+                intent.putExtra("id",convertList.get(position).getId());
+                startActivity(intent);
+            }
+        });
     }
 
     @Override

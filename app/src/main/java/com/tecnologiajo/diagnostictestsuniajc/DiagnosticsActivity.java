@@ -3,12 +3,15 @@ package com.tecnologiajo.diagnostictestsuniajc;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.shephertz.app42.paas.sdk.android.App42Exception;
@@ -36,13 +39,20 @@ public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42
         setContentView(R.layout.activity_diagnostics);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
         asyncService = AsyncApp42ServiceApi.instance(this);
         mProvider = new DrawableProvider(this);
         listDianostic = (ListView) findViewById(R.id.listDiagnoostics);
+
+        docId= getIntent().getExtras().getString("id","");
+
         // temporal
         progressDialog = ProgressDialog.show(this, "", "Searching..");
         progressDialog.setCancelable(true);
-        asyncService.findDocByKeyValue(Constants.App42DBName, "diagnosticos", "id_creator", "56e0c193e4b0048ca90af2f6", this);
+        asyncService.findDocByKeyValue(Constants.App42DBName, "diagnosticos", "id_creator", docId, this);
     }
 
     @Override
@@ -81,7 +91,7 @@ public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42
     public void onFindDocSuccess(Storage response) {
         progressDialog.dismiss();
         ArrayList<Storage.JSONDocument> jsonDocList = response.getJsonDocList();
-        List<Diagnostico> convertList = new ArrayList<>();
+        final List<Diagnostico> convertList = new ArrayList<>();
         try {
             for (int i = 0; i < jsonDocList.size(); i++) {
                 Storage.JSONDocument jsonDocument = jsonDocList.get(i);
@@ -99,6 +109,14 @@ public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42
         }
         DiagnosticsAdapter diagnosticsAdapter = new DiagnosticsAdapter(this, 0, convertList);
         listDianostic.setAdapter(diagnosticsAdapter);
+        listDianostic.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getApplicationContext(), TestActivity.class);
+                intent.putExtra("id", convertList.get(position).getId());
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
