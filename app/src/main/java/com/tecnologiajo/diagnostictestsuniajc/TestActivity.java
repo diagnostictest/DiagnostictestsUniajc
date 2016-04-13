@@ -3,12 +3,16 @@ package com.tecnologiajo.diagnostictestsuniajc;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 
 import android.support.v7.app.AppCompatActivity;
 
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Animation;
@@ -56,6 +60,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
     JSONObject jsonObject1;
     /** contador para las preguntas */
     private int next;
+    /** Controlador de tiempos */
     CountDownTimer countDownTimer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,24 +88,26 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
         viewAnimator.setInAnimation(slide_in_left);
         viewAnimator.setOutAnimation(slide_out_right);
 
+        /** Inicializamos las banderas */
         seleccion=false;
         finalizar=false;
         next=0;
-
+        /** Obtenemos el servicio App42 */
         asyncService = AsyncApp42ServiceApi.instance(this);
-        // temporal
 
+        /** Obtenemos el id del diagnostico*/
         docId= getIntent().getExtras().getString("id","");
 
         progressDialog = ProgressDialog.show(this, "", "Searching..");
         progressDialog.setCancelable(true);
         asyncService.findDocByDocId(Constants.App42DBName, "diagnosticos", docId, this);
-        // definir primera pregunta del test
+        /** definimos la primera pregunta de la prueba **/
         itempregunta.setText("Q"+String.valueOf((next + 1)));
-        //relativeLayout.addView(cardview);
+        /** Json para el resultado final **/
         jsonArrayResult = new JSONArray();
 
     }
+
 
     public void sincronizatedTest(){
         countDownTimer = new CountDownTimer(30000, 1000) {
@@ -116,8 +123,11 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             }
         }.start();
     }
-    /** recorre el documento json extraido del servicio  y activa el cronometro */
-    public void asignarPreguntas(){
+    /** recorre el documento json extraido del servicio
+     *  para esteblecer la pregunta con sus posible
+     *  respuestas y activa el cronometro
+     * */
+    public void assignQuestion(){
         try {
             sincronizatedTest();
             jsonObject1  = jsonArray.getJSONObject(next);
@@ -134,13 +144,13 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             e.printStackTrace();
         }
     }
-    /** pasa a la siguiere pregunta */
+    /** pasa a la siguientee pregunta */
     public void nextQuestion(View view){
         if(next<(jsonArray.length()-1)) {
             next++;
             itempregunta.setText("Q" + String.valueOf((next + 1)));
             jsonArrayResult.put(jsonObject1);
-            asignarPreguntas();
+            assignQuestion();
             viewAnimator.showNext();
 
         }else{
@@ -178,7 +188,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             e.printStackTrace();
         }
     }
-    /** selecciona repuesta opcion 1 */
+    /** selecciona repuesta opcion 2 */
     public void Answer2(View view){
         try {
             JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta2"));
@@ -198,7 +208,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             e.printStackTrace();
         }
     }
-    /** selecciona repuesta opcion 1 */
+    /** selecciona repuesta opcion 3 */
     public void Answer3(View view){
         try {
             JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta3"));
@@ -218,7 +228,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             e.printStackTrace();
         }
     }
-    /** selecciona repuesta opcion 1 */
+    /** selecciona repuesta opcion 4 */
     public void Answer4(View view){
         try {
             JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta4"));
@@ -248,11 +258,16 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
                 e.printStackTrace();
             }
             diagnosticos.insertarDIAGNOSTICOS(Id, jsonDiagnostico.toString());
-            createAlertDialog("Se Almaceno temporalmente en su memoria : " + jsonDiagnostico.toString());
             progressDialog.dismiss();
+            Intent intent = new Intent(getApplicationContext(),RsultActivity.class);
+            intent.putExtra("result", jsonDiagnostico.toString());
+            startActivity(intent);
+
         }else{
-            createAlertDialog("Se Almaceno correctamente : " + jsonDiagnostico.toString());
             progressDialog.dismiss();
+            Intent intent = new Intent(getApplicationContext(),RsultActivity.class);
+            intent.putExtra("result",jsonDiagnostico.toString());
+            startActivity(intent);
         }
 
     }
@@ -273,7 +288,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            asignarPreguntas();
+            assignQuestion();
             progressDialog.dismiss();
 
         }else{

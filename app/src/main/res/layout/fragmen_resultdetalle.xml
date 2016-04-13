@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/question"
         android:layout_width="match_parent"
         android:background="@color/colorPrimaryDark"
         android:layout_weight="10"
+        android:orientation="vertical"
         android:paddingTop="0dp"
         android:layout_height="match_parent">
 
@@ -12,16 +13,17 @@
             android:layout_margin="4dp"
             android:layout_width="match_parent"
             android:clickable="true"
-            android:background="@drawable/red_button"
-            android:layout_height="160dp">
-            <ImageView
+            android:layout_weight="80"
+            android:background="@drawable/blue_button"
+            android:layout_height="match_parent">
+            <!--<ImageView
                 android:id="@+id/img1"
                 android:layout_width="?android:attr/listPreferredItemHeight"
                 android:layout_height="match_parent"
                 android:src="@drawable/circulo"
-                />
+                />-->
             <TextView
-                android:id="@+id/txtQ1"
+                android:id="@+id/textquestion"
                 android:layout_width="match_parent"
                 android:text="ddff"
                 android:fontFamily="sans-serif-medium"
@@ -39,18 +41,18 @@
 
         <RelativeLayout
             android:id="@+id/Q2"
-            android:layout_below="@+id/Q1"
             android:background="@drawable/white_button"
             android:layout_margin="4dp"
+            android:layout_weight="40"
             android:layout_width="match_parent"
-            android:layout_height="70dp">
-            <ImageView
+            android:layout_height="match_parent">
+            <!--<ImageView
                 android:id="@+id/img2"
                 android:layout_width="?android:attr/listPreferredItemHeight"
                 android:src="@drawable/question"
                 android:layout_height="match_parent" />
             <TextView
-                android:id="@+id/txtQ2"
+                android:id="@+id/txtQ1"
                 android:layout_width="match_parent"
                 android:text="ddff"
                 android:fontFamily="sans-serif-medium"
@@ -63,98 +65,14 @@
                 android:shadowRadius="1.8"
                 android:gravity="center"
                 android:layout_toRightOf="@+id/img2"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent" />-->
+                <ListView
+                    android:id="@+id/listresult"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                </ListView>
         </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/Q3"
-            android:layout_below="@+id/Q2"
-            android:layout_margin="4dp"
-            android:background="@drawable/white_button"
-            android:layout_width="match_parent"
-            android:clickable="true"
-            android:layout_height="70dp">
-            <ImageView
-                android:id="@+id/img3"
-                android:layout_width="?android:attr/listPreferredItemHeight"
-                android:src="@drawable/question"
-                android:layout_height="match_parent" />
-            <TextView
-                android:id="@+id/txtQ3"
-                android:layout_width="match_parent"
-                android:text="ddff"
-                android:fontFamily="sans-serif-medium"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                android:shadowColor="#8a6603"
-                android:shadowDx="3"
-                android:shadowDy="2"
-                android:shadowRadius="1.8"
-                android:gravity="center"
-                android:layout_toRightOf="@+id/img3"
-                android:layout_height="match_parent" />
-        </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/Q4"
-            android:layout_below="@+id/Q3"
-            android:layout_width="match_parent"
-            android:background="@drawable/white_button"
-            android:clickable="true"
-            android:layout_margin="4dp"
-            android:layout_height="70dp">
-            <ImageView
-                android:id="@+id/img4"
-                android:layout_width="?android:attr/listPreferredItemHeight"
-                android:src="@drawable/question"
-                android:scaleType="fitCenter"
-                android:layout_height="match_parent" />
-            <TextView
-                android:id="@+id/txtQ4"
-                android:layout_width="match_parent"
-                android:text="ddff"
-                android:fontFamily="sans-serif-medium"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                android:shadowColor="#8a6603"
-                android:shadowDx="3"
-                android:shadowDy="2"
-                android:shadowRadius="1.8"
-                android:gravity="center"
-                android:layout_toRightOf="@+id/img4"
-                android:layout_height="match_parent" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/Q5"
-            android:layout_below="@+id/Q4"
-            android:layout_width="match_parent"
-            android:background="@drawable/white_button"
-            android:clickable="true"
-            android:layout_margin="4dp"
-            android:layout_height="70dp">
-        <ImageView
-            android:id="@+id/img5"
-            android:layout_width="?android:attr/listPreferredItemHeight"
-            android:src="@drawable/question"
-            android:scaleType="fitCenter"
-            android:layout_height="match_parent" />
-        <TextView
-            android:id="@+id/txtQ5"
-            android:layout_width="match_parent"
-            android:text="ddff"
-            android:fontFamily="sans-serif-medium"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            android:shadowColor="#8a6603"
-            android:shadowDx="3"
-            android:shadowDy="2"
-            android:shadowRadius="1.8"
-            android:gravity="center"
-            android:layout_toRightOf="@+id/img5"
-            android:layout_height="match_parent" />
-    </RelativeLayout>
-</RelativeLayout>
+</LinearLayout>

@@ -5,6 +5,7 @@
 
 
     <TextView
+        android:id="@+id/textChart"
         android:text="prueba"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,6 +16,7 @@
 
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pieChart"
+        android:layout_below="@+id/textChart"
         android:layout_width="wrap_content"
         android:layout_height="300dp"
         android:layout_margin="10dp" />
