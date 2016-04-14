@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by iptapps on 6/04/16.
+ *
  */
 public class AsignatureActivity extends AppCompatActivity implements AsyncApp42ServiceApi.App42StorageServiceListener {
 
@@ -40,13 +40,18 @@ public class AsignatureActivity extends AppCompatActivity implements AsyncApp42S
 
     private DrawableProvider mProvider;
 
+    /**
+     * Perform initialization of all fragments and loaders.
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down
+     * then this Bundle contains the data it most recently supplied in Activity.onSaveInstanceState(android.os.Bundle).
+     * Note: Otherwise it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_asignature);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         asyncService = AsyncApp42ServiceApi.instance(this);
         mProvider = new DrawableProvider(this);
@@ -58,6 +63,11 @@ public class AsignatureActivity extends AppCompatActivity implements AsyncApp42S
         asyncService.findAllDocs(Constants.App42DBName, "asignaturas", this);
     }
 
+    /**
+     * Initialize the contents of the Activity's standard options menu. You should place your menu items in to menu.
+     * @param menu The options menu in which you place your items
+     * @return You must return true for the menu to be displayed; if you return false it will not be shown.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -65,6 +75,14 @@ public class AsignatureActivity extends AppCompatActivity implements AsyncApp42S
         return true;
     }
 
+    /**
+     * This hook is called whenever an item in your options menu is selected.
+     * The default implementation simply returns false to have the normal processing happen
+     * (calling the item's Runnable or sending a message to its Handler as appropriate).
+     * You can use this method for any items for which you would like to do processing without those other facilities.
+     * @param item The menu item that was selected.
+     * @return false to allow normal menu processing to proceed, true to consume it here.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -80,6 +98,10 @@ public class AsignatureActivity extends AppCompatActivity implements AsyncApp42S
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Implementación desde la interface @link{AsyncApp42ServiceApi.App42StorageServiceListener}
+     * @param response the response
+     */
     @Override
     public void onDocumentInserted(Storage response) {
 
