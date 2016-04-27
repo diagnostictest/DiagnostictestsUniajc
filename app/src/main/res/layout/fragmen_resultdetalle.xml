@@ -46,32 +46,13 @@
             android:layout_weight="40"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <!--<ImageView
-                android:id="@+id/img2"
-                android:layout_width="?android:attr/listPreferredItemHeight"
-                android:src="@drawable/question"
-                android:layout_height="match_parent" />
-            <TextView
-                android:id="@+id/txtQ1"
-                android:layout_width="match_parent"
-                android:text="ddff"
-                android:fontFamily="sans-serif-medium"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                android:shadowColor="#8a6603"
-                android:shadowDx="3"
-                android:shadowDy="2"
-                android:shadowRadius="1.8"
-                android:gravity="center"
-                android:layout_toRightOf="@+id/img2"
-                android:layout_height="match_parent" />-->
-                <ListView
-                    android:id="@+id/listresult"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
 
-                </ListView>
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/pieChart"
+                android:layout_width="wrap_content"
+                android:layout_height="300dp"
+                android:layout_margin="10dp" />
+
         </RelativeLayout>
 
 
