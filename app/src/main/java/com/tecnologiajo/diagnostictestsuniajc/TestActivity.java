@@ -53,6 +53,8 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
     private String docId = "";
     /** resive el documento json devuelto del servicio */
     private String docDocument="";
+    /** The doc id_creator id padre. */
+    private String id_creator = "";
     /** json array para el grupo de respuestas */
     JSONArray jsonArray;
     JSONArray jsonArrayResult;
@@ -158,6 +160,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
                 jsonArrayResult.put(jsonObject1);
                 jsonDiagnostico.put("preguntas", jsonArrayResult);
                 jsonDiagnostico.put("id_usuario","");
+                jsonDiagnostico.put("id_creator",id_creator);
 
                 progressDialog = ProgressDialog.show(this, "", "Input..");
                 progressDialog.setCancelable(true);
@@ -285,6 +288,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             try {
                 jsonDiagnostico = new JSONObject(docDocument);
                 jsonArray = new JSONArray(jsonDiagnostico.getString("preguntas"));
+                id_creator = jsonDiagnostico.getString("id_creator");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
