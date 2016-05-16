@@ -48,6 +48,7 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
     public  int totalHBuenas=0,totalHPerdidas=0,totalHistorial=0;
     /** @propierty */
     public  String id_creator="";
+    private static String  asignatura = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +58,7 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
         /** obtenemos el resultado de la prueba
          * */
         docResultado= getIntent().getExtras().getString("result","");
+        asignatura = getIntent().getExtras().getString("asignatura","");
         /** Obtenemos el servicio App42 */
         progressDialog = ProgressDialog.show(this, "", "Searching..");
         progressDialog.setCancelable(true);
@@ -197,22 +199,36 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
             textresult =(TextView) view.findViewById(R.id.textResult);
             iconoResult = (ImageView) view.findViewById(R.id.iconresult);
             calificacion = (RatingBar) view.findViewById(R.id.calificacion);
-            calificacion.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    /** Obtenemos el servicio App42 */
-                    progressDialog = ProgressDialog.show(getActivity(), "", "Updating..");
-                    progressDialog.setCancelable(true);
-
-                }
-            });
+            asyncService = AsyncApp42ServiceApi.instance(getActivity());
             return view;
         }
 
         @Override
         public void onActivityCreated(@Nullable Bundle savedInstanceState) {
             super.onActivityCreated(savedInstanceState);
+            calificacion.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                @Override
+                public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+
+                    /** Obtenemos el servicio App42 */
+                    progressDialog = ProgressDialog.show(getActivity(), "", "Updating..");
+                    progressDialog.setCancelable(true);
+                    try {
+
+                        JSONObject jsonDiagnostico = new JSONObject(asignatura);
+                        int cantidadtest = jsonDiagnostico.getInt("cantidadtest");
+                        float totalcalificacion = jsonDiagnostico.getInt("totalcalificacion");
+                        cantidadtest++;
+                        totalcalificacion += rating;
+                        jsonDiagnostico.put("cantidadtest", cantidadtest);
+                        jsonDiagnostico.put("totalcalificacion", totalcalificacion);
+                        asyncService.updateDocByKeyValue(Constants.App42DBName, "asignaturas", "asignatureid", jsonDiagnostico.getString("asignatureid"), jsonDiagnostico, DetalleResult.this);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
             estadoRespuesta=false;
             try {
                 jsonDiagnostico = new JSONObject(docResultado);
@@ -298,9 +314,6 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
             pieChart.setDescription("");
         /*Ocultar leyenda*/
             pieChart.setDrawLegend(false);
-            String id_creator="";
-            id_creator=getArguments().getString("id_creator");
-            asyncService.findDocByKeyValue(Constants.App42DBName, "asignaturas", "id_creator", id_creator, this);
         }
 
         @Override
@@ -311,7 +324,8 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
 
         @Override
         public void onUpdateDocSuccess(Storage response) {
-
+            progressDialog.dismiss();
+            getActivity().finish();
         }
 
         @Override
