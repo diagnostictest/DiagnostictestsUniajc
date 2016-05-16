@@ -253,7 +253,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
     }
     @Override
     public void onDocumentInserted(Storage response) {
-        if(response.isFromCache()){
+        /*if(response.isFromCache()){
             Diagnosticos diagnosticos= new Diagnosticos(this);
             try {
                 jsonDiagnostico.put("registrado",false);
@@ -266,12 +266,12 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             intent.putExtra("result", jsonDiagnostico.toString());
             startActivity(intent);
 
-        }else{
+        }else{*/
             progressDialog.dismiss();
             Intent intent = new Intent(getApplicationContext(),RsultActivity.class);
             intent.putExtra("result",jsonDiagnostico.toString());
             startActivity(intent);
-        }
+        //}
 
     }
 
@@ -282,7 +282,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
 
     @Override
     public void onFindDocSuccess(Storage response) {
-        if(response.isFromCache()){
+        //if(response.isFromCache()){
             docDocument=response.getJsonDocList().get(0).getJsonDoc();
             Id = response.getJsonDocList().get(0).getDocId();
             try {
@@ -295,10 +295,10 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             assignQuestion();
             progressDialog.dismiss();
 
-        }else{
+        /*}else{
             createAlertDialog("Sin conexion : ");
             progressDialog.dismiss();
-        }
+        }*/
 
     }
 

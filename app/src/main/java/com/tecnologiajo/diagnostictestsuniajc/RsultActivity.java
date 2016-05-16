@@ -44,8 +44,10 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
     private static String docResultado="";
     /** The progress dialog. */
     private ProgressDialog progressDialog;
-    /** @parameter total Historial Ganadas y perdidas */
+    /** total Historial Ganadas y perdidas */
     public  int totalHBuenas=0,totalHPerdidas=0,totalHistorial=0;
+    /** @propierty */
+    public  String id_creator="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,8 +62,10 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
         progressDialog.setCancelable(true);
         asyncService = AsyncApp42ServiceApi.instance(this);
         try {
+
             JSONObject jsonDiagnostico = new JSONObject(docResultado);
-            asyncService.findDocByKeyValue(Constants.App42DBName, "historial","id_creator",jsonDiagnostico.getString("id_creator"),this);
+            id_creator=jsonDiagnostico.getString("id_creator");
+            asyncService.findDocByKeyValue(Constants.App42DBName, "historial","id_creator",id_creator,this);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -91,7 +95,7 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
     public void onFindDocSuccess(Storage response) {
 
 
-        if(response.isFromCache()){
+       // if(response.isFromCache()){
             ArrayList<Storage.JSONDocument> jsonDocList = response.getJsonDocList();
             for (int i=0;i<jsonDocList.size();i++){
                 String docDocument=response.getJsonDocList().get(i).getJsonDoc();
@@ -132,14 +136,14 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
             progressDialog.dismiss();
 
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Fragment detalleResult = DetalleResult.newInstance(totalHBuenas,totalHPerdidas,totalHistorial);
+            Fragment detalleResult = DetalleResult.newInstance(totalHBuenas,totalHPerdidas,totalHistorial,id_creator);
             ft.add(R.id.display, detalleResult, "Detail_Result");
             ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             ft.commit();
-        }else{
+        /*}else{
             createAlertDialog("Sin conexion : ");
             progressDialog.dismiss();
-        }
+        }*/
 
     }
 
@@ -159,7 +163,7 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
 
     }
 
-    public static class DetalleResult extends Fragment{
+    public static class DetalleResult extends Fragment implements AsyncApp42ServiceApi.App42StorageServiceListener{
         public TextView timeTest,textresult;
         public ImageView iconoResult;
         public RatingBar calificacion;
@@ -168,15 +172,20 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
         private boolean estadoRespuesta=false;
         private int totalBuenas=0,total=0;
         private PieChart pieChart;
+        /** The progress dialog. */
+        private ProgressDialog progressDialog;
+        /** The async service. */
+        private AsyncApp42ServiceApi asyncService;
         public DetalleResult() {
         }
 
-        public static DetalleResult newInstance(int totalHBuenas,int totalHPerdidas,int totalHistorial) {
+        public static DetalleResult newInstance(int totalHBuenas,int totalHPerdidas,int totalHistorial,String id_creator) {
             DetalleResult f = new DetalleResult();
             Bundle args = new Bundle();
             args.putInt("totalHBuenas", totalHBuenas);
             args.putInt("totalHPerdidas", totalHPerdidas);
             args.putInt("totalHistorial", totalHistorial);
+            args.putString("id_creator",id_creator);
             f.setArguments(args);
             return f;
         }
@@ -188,6 +197,16 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
             textresult =(TextView) view.findViewById(R.id.textResult);
             iconoResult = (ImageView) view.findViewById(R.id.iconresult);
             calificacion = (RatingBar) view.findViewById(R.id.calificacion);
+            calificacion.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    /** Obtenemos el servicio App42 */
+                    progressDialog = ProgressDialog.show(getActivity(), "", "Updating..");
+                    progressDialog.setCancelable(true);
+
+                }
+            });
             return view;
         }
 
@@ -238,6 +257,7 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
             pieChart = (PieChart) getView().findViewById(R.id.pieChart);
             int totalHBuenas=0,totalHPerdidas=0;
             float totalHistorial= (float) 0.0;
+
             totalHBuenas=getArguments().getInt("totalHBuenas");
             totalHPerdidas=getArguments().getInt("totalHPerdidas");
             totalHistorial=getArguments().getInt("totalHistorial");
@@ -278,6 +298,59 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
             pieChart.setDescription("");
         /*Ocultar leyenda*/
             pieChart.setDrawLegend(false);
+            String id_creator="";
+            id_creator=getArguments().getString("id_creator");
+            asyncService.findDocByKeyValue(Constants.App42DBName, "asignaturas", "id_creator", id_creator, this);
+        }
+
+        @Override
+        public void onDocumentInserted(Storage response) {
+
+
+        }
+
+        @Override
+        public void onUpdateDocSuccess(Storage response) {
+
+        }
+
+        @Override
+        public void onFindDocSuccess(Storage response) {
+
+        }
+
+        @Override
+        public void onInsertionFailed(App42Exception ex) {
+
+        }
+
+        @Override
+        public void onFindDocFailed(App42Exception ex) {
+            progressDialog.dismiss();
+            createAlertDialog("Exception Occurred : "+ ex.getMessage());
+        }
+
+        @Override
+        public void onUpdateDocFailed(App42Exception ex) {
+            progressDialog.dismiss();
+            createAlertDialog("Exception Occurred : "+ ex.getMessage());
+        }
+        /**
+         * Creates the alert dialog.
+         *
+         * @param msg the msg
+         */
+        public void createAlertDialog(String msg) {
+            AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
+            alertbox.setTitle("Response Message");
+            alertbox.setMessage(msg);
+            alertbox.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                // do something when the button is clicked
+                public void onClick(DialogInterface arg0, int arg1)
+                {
+                }
+            });
+            alertbox.show();
         }
     }
 
