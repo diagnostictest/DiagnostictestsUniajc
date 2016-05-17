@@ -11,17 +11,21 @@ public class Diagnostico {
     private String descripcion;
     private String id_creator;
     private String preguntas;
+    private int cantidadtest;
+    private float totalcalificacion;
+    private String schema;
     private Drawable drawable;
 
     public Diagnostico() {
     }
 
-    public Diagnostico(String id, String nombre, String descripcion, String id_creator, String preguntas) {
+    public Diagnostico(String id, String nombre, String descripcion, String id_creator, String preguntas, String schema) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.id_creator = id_creator;
         this.preguntas = preguntas;
+        this.schema=schema;
     }
 
     public String getId() {
@@ -70,5 +74,29 @@ public class Diagnostico {
 
     public void setDrawable(Drawable drawable) {
         this.drawable = drawable;
+    }
+
+    public int getCantidadtest() {
+        return cantidadtest;
+    }
+
+    public void setCantidadtest(int cantidadtest) {
+        this.cantidadtest = cantidadtest;
+    }
+
+    public float getTotalcalificacion() {
+        return totalcalificacion;
+    }
+
+    public void setTotalcalificacion(float totalcalificacion) {
+        this.totalcalificacion = totalcalificacion;
+    }
+
+    public String getSchema() {
+        return schema;
+    }
+
+    public void setSchema(String schema) {
+        this.schema = schema;
     }
 }

@@ -9,19 +9,17 @@ public class Asignature {
     private String id;
     private String nombre;
     private String descripcion;
-    private String schema;
-    private int cantidadtest;
-    private float totalcalificacion;
+
+
     private Drawable drawable;
 
     public Asignature() {
     }
 
-    public Asignature(String id, String nombre, String descripcion,String schema) {
+    public Asignature(String id, String nombre, String descripcion) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
-        this.schema = schema;
     }
 
     public String getId() {
@@ -56,27 +54,5 @@ public class Asignature {
         this.drawable = drawable;
     }
 
-    public String getSchema() {
-        return schema;
-    }
 
-    public void setSchema(String schema) {
-        this.schema = schema;
-    }
-
-    public int getCantidadtest() {
-        return cantidadtest;
-    }
-
-    public void setCantidadtest(int cantidadtest) {
-        this.cantidadtest = cantidadtest;
-    }
-
-    public float getTotalcalificacion() {
-        return totalcalificacion;
-    }
-
-    public void setTotalcalificacion(float totalcalificacion) {
-        this.totalcalificacion = totalcalificacion;
-    }
 }

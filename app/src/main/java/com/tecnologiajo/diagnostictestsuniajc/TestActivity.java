@@ -56,7 +56,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
     /** The doc id_creator id padre. */
     private String id_creator = "";
     /** Documento asignatura */
-    private String asignatura = "";
+    private String diagnostico = "";
     /** json array para el grupo de respuestas */
     JSONArray jsonArray;
     JSONArray jsonArrayResult;
@@ -101,7 +101,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
 
         /** Obtenemos el id del diagnostico*/
         docId= getIntent().getExtras().getString("id","");
-        asignatura = getIntent().getExtras().getString("asignatura","");
+        diagnostico = getIntent().getExtras().getString("diagnostico","");
         progressDialog = ProgressDialog.show(this, "", "Searching..");
         progressDialog.setCancelable(true);
         asyncService.findDocByDocId(Constants.App42DBName, "diagnosticos", docId, this);
@@ -272,7 +272,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             progressDialog.dismiss();
             Intent intent = new Intent(getApplicationContext(),RsultActivity.class);
             intent.putExtra("result",jsonDiagnostico.toString());
-            intent.putExtra("asignatura",asignatura);
+            intent.putExtra("diagnostico", diagnostico);
             startActivity(intent);
             finish();
         //}

@@ -33,7 +33,7 @@ public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42
     private String docId = "";
     private ListView listDianostic;
     private DrawableProvider mProvider;
-    private String asignatura="";
+    private String diagnostico="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +49,7 @@ public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42
         listDianostic = (ListView) findViewById(R.id.listDiagnoostics);
 
         docId= getIntent().getExtras().getString("id","");
-        asignatura= getIntent().getExtras().getString("asignatura","");
+
 
         // temporal
         progressDialog = ProgressDialog.show(this, "", "Searching..");
@@ -102,6 +102,7 @@ public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42
                 Diagnostico diagnostico = new Diagnostico();
                 diagnostico.setId(docId);
                 diagnostico.setDescripcion(jsonObject.getString("descripcion"));
+                diagnostico.setSchema(jsonDocument.getJsonDoc());
                 Drawable drawable = mProvider.getRoundWithBorder(diagnostico.getDescripcion().substring(0,1).toUpperCase());
                 diagnostico.setDrawable(drawable);
                 convertList.add(diagnostico);
@@ -116,7 +117,7 @@ public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), TestActivity.class);
                 intent.putExtra("id", convertList.get(position).getId());
-                intent.putExtra("asignatura", asignatura);
+                intent.putExtra("diagnostico", convertList.get(position).getSchema());
                 startActivity(intent);
             }
         });

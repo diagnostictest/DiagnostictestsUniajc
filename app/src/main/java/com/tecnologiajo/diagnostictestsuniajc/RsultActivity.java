@@ -48,7 +48,7 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
     public  int totalHBuenas=0,totalHPerdidas=0,totalHistorial=0;
     /** @propierty */
     public  String id_creator="";
-    private static String  asignatura = "";
+    private static String  diagnostico = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +58,7 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
         /** obtenemos el resultado de la prueba
          * */
         docResultado= getIntent().getExtras().getString("result","");
-        asignatura = getIntent().getExtras().getString("asignatura","");
+        diagnostico = getIntent().getExtras().getString("diagnostico","");
         /** Obtenemos el servicio App42 */
         progressDialog = ProgressDialog.show(this, "", "Searching..");
         progressDialog.setCancelable(true);
@@ -215,7 +215,7 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
                     progressDialog.setCancelable(true);
                     try {
 
-                        JSONObject jsonDiagnostico = new JSONObject(asignatura);
+                        JSONObject jsonDiagnostico = new JSONObject(diagnostico);
                         int cantidadtest = jsonDiagnostico.getInt("cantidadtest");
                         float totalcalificacion = jsonDiagnostico.getInt("totalcalificacion");
                         cantidadtest++;

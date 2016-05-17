@@ -123,7 +123,7 @@ public class AsignatureActivity extends AppCompatActivity implements AsyncApp42S
                 String docId = jsonDocument.getDocId();
                 String nombre = new JSONObject(jsonDocument.getJsonDoc()).getString("nombre");
                 String descripcion = new JSONObject(jsonDocument.getJsonDoc()).getString("descripcion");
-                Asignature asignature = new Asignature(docId, nombre, descripcion,jsonDocList.get(i).getJsonDoc());
+                Asignature asignature = new Asignature(docId, nombre, descripcion);
                 Drawable drawable = mProvider.getRoundWithBorder(asignature.getDescripcion().substring(0,1).toUpperCase());
                 asignature.setDrawable(drawable);
                 convertList.add(asignature);
@@ -138,7 +138,6 @@ public class AsignatureActivity extends AppCompatActivity implements AsyncApp42S
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(),DiagnosticsActivity.class);
                 intent.putExtra("id",convertList.get(position).getId());
-                intent.putExtra("asignatura",convertList.get(position).getSchema());
                 startActivity(intent);
             }
         });
