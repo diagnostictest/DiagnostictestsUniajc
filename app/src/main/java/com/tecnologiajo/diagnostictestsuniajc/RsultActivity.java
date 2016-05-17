@@ -49,6 +49,7 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
     /** @propierty */
     public  String id_creator="";
     private static String  diagnostico = "";
+    private static String  iddiagnostico = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +60,7 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
          * */
         docResultado= getIntent().getExtras().getString("result","");
         diagnostico = getIntent().getExtras().getString("diagnostico","");
+        iddiagnostico = getIntent().getExtras().getString("id","");
         /** Obtenemos el servicio App42 */
         progressDialog = ProgressDialog.show(this, "", "Searching..");
         progressDialog.setCancelable(true);
@@ -222,7 +224,7 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
                         totalcalificacion += rating;
                         jsonDiagnostico.put("cantidadtest", cantidadtest);
                         jsonDiagnostico.put("totalcalificacion", totalcalificacion);
-                        asyncService.updateDocByKeyValue(Constants.App42DBName, "asignaturas", "asignatureid", jsonDiagnostico.getString("asignatureid"), jsonDiagnostico, DetalleResult.this);
+                        asyncService.updateDocByDocId(Constants.App42DBName, "diagnosticos", iddiagnostico, jsonDiagnostico, DetalleResult.this);
 
                     } catch (JSONException e) {
                         e.printStackTrace();

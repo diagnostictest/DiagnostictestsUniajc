@@ -3,6 +3,8 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="action_dowload">dowload</string>
+    <string name="action_byId">By ID</string>
     <string name="title_activity_test">TestActivity</string>
     <string name="title_activity_rsult">RsultActivity</string>
 </resources>

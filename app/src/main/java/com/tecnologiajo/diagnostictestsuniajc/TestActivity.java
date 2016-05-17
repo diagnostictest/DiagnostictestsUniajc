@@ -2,8 +2,10 @@ package com.tecnologiajo.diagnostictestsuniajc;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -66,6 +68,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
     private int next;
     /** Controlador de tiempos */
     CountDownTimer countDownTimer;
+    private SharedPreferences sharedpreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,15 +99,32 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
         seleccion=false;
         finalizar=false;
         next=0;
-        /** Obtenemos el servicio App42 */
-        asyncService = AsyncApp42ServiceApi.instance(this);
-
         /** Obtenemos el id del diagnostico*/
-        docId= getIntent().getExtras().getString("id","");
+        docId= getIntent().getExtras().getString("id", "");
+
+        /** obtenemos la prueba si se descargo */
+        sharedpreferences = getSharedPreferences("diagnosticos", Context.MODE_PRIVATE);
+        String diagnostic_dowload=sharedpreferences.getString(docId,"");
         diagnostico = getIntent().getExtras().getString("diagnostico","");
-        progressDialog = ProgressDialog.show(this, "", "Searching..");
-        progressDialog.setCancelable(true);
-        asyncService.findDocByDocId(Constants.App42DBName, "diagnosticos", docId, this);
+        String dowload = getIntent().getExtras().getString("dowload","");
+        if(dowload.equals("D")){
+            docDocument=diagnostico;
+            Id = docId;
+            try {
+                jsonDiagnostico = new JSONObject(docDocument);
+                jsonArray = new JSONArray(jsonDiagnostico.getString("preguntas"));
+                id_creator = jsonDiagnostico.getString("id_creator");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            assignQuestion();
+        }else {
+            progressDialog = ProgressDialog.show(this, "", "Searching..");
+            progressDialog.setCancelable(true);
+            /** Obtenemos el servicio App42 */
+            asyncService = AsyncApp42ServiceApi.instance(this);
+            asyncService.findDocByDocId(Constants.App42DBName, "diagnosticos", docId, this);
+        }
         /** definimos la primera pregunta de la prueba **/
         itempregunta.setText("Q"+String.valueOf((next + 1)));
         /** Json para el resultado final **/
@@ -273,6 +293,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             Intent intent = new Intent(getApplicationContext(),RsultActivity.class);
             intent.putExtra("result",jsonDiagnostico.toString());
             intent.putExtra("diagnostico", diagnostico);
+            intent.putExtra("id", Id);
             startActivity(intent);
             finish();
         //}

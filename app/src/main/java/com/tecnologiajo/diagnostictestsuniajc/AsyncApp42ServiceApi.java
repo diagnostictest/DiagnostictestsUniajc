@@ -392,7 +392,7 @@ public class AsyncApp42ServiceApi {
 			@Override
 			public void run() {
 				try {
-					final Storage response = storageService.findDocumentByKeyValue(dbName, collectionName,key,value);
+					final Storage response = storageService.findDocumentByKeyValue(dbName, collectionName, key, value);
 					callerThreadHandler.post(new Runnable() {
 						@Override
 						public void run() {
@@ -484,7 +484,46 @@ public class AsyncApp42ServiceApi {
 			}
 		}.start();
 	}
-
+	/**
+	 * Update doc by key value.
+	 *
+	 * @param dbName the db name
+	 * @param collectionName the collection name
+	 * @param docId the doc id
+	 * @param newJsonDoc the new json doc
+	 * @param callBack the call back
+	 */
+	/*
+	 * This function Find JSON Document By Id.
+	 */
+	public void updateDocByDocId(final String dbName,
+									final String collectionName, final String docId,
+									final JSONObject newJsonDoc, final App42StorageServiceListener callBack) {
+		final Handler callerThreadHandler = new Handler();
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					final Storage response = storageService.updateDocumentByDocId(dbName, collectionName, docId, newJsonDoc);
+					callerThreadHandler.post(new Runnable() {
+						@Override
+						public void run() {
+							callBack.onUpdateDocSuccess(response);
+						}
+					});
+				} catch (final App42Exception ex) {
+					callerThreadHandler.post(new Runnable() {
+						@Override
+						public void run() {
+							if (callBack != null) {
+								callBack.onUpdateDocFailed(ex);
+							}
+						}
+					});
+				}
+			}
+		}.start();
+	}
 	/**
 	 * The listener interface for receiving app42StorageService events.
 	 * The class that is interested in processing a app42StorageService
