@@ -17,10 +17,10 @@ public class Constants {
 	/*
 	 * For getting API_KEY & SECRET_KEY, just login or register to AppHQ Console (http://apphq.shephertz.com/). 
 	 */
-	 static final String App42ApiKey = "e7cb3839ca4a56b2896c84ae40d0ddf828e5daa751da9ea91473c028986ef10c";  // API_KEY received From AppHQ console, When You create your first app in AppHQ Console.
+	 static final String App42ApiKey = "f58efc1a890cd9cf2ca89dfe23da14cb2272bd177b9cefe16b7092c4dab0ac9a";  // API_KEY received From AppHQ console, When You create your first app in AppHQ Console.
 	 
  	/** The Constant App42ApiSecret. */
- 	static final String App42ApiSecret = "f4a534c2448b6a3e86c526e8f40f36e7cd55b75347a4051f68addf2a056a7241"; // SECRET_KEY received From AppHQ console, When You create your first app in AppHQ Console.
+ 	static final String App42ApiSecret = "e4354e725c450acae04087d86c6487efb6d5cd050a569f6bd1e8a459e91c7591"; // SECRET_KEY received From AppHQ console, When You create your first app in AppHQ Console.
 	 
 	 /** The Constant App42DBName. */
  	/*

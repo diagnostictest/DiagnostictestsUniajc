@@ -14,9 +14,11 @@ import android.os.Handler;
 
 import com.shephertz.app42.paas.sdk.android.App42API;
 import com.shephertz.app42.paas.sdk.android.App42CacheManager;
+import com.shephertz.app42.paas.sdk.android.App42CallBack;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.game.Game;
 import com.shephertz.app42.paas.sdk.android.game.ScoreBoardService;
+import com.shephertz.app42.paas.sdk.android.push.PushNotificationService;
 import com.shephertz.app42.paas.sdk.android.storage.Query;
 import com.shephertz.app42.paas.sdk.android.storage.QueryBuilder;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
@@ -43,7 +45,10 @@ public class AsyncApp42ServiceApi {
 	
 	/** The score board service. */
 	private ScoreBoardService scoreBoardService;
-	
+
+	/** The push  service. */
+	private PushNotificationService pushNotificationService ;
+
 	/** The m instance. */
 	private static AsyncApp42ServiceApi mInstance = null;
 	
@@ -54,12 +59,13 @@ public class AsyncApp42ServiceApi {
 	 */
 	private AsyncApp42ServiceApi(Context context) {
 		App42API.initialize(context, Constants.App42ApiKey, Constants.App42ApiSecret);
-		App42CacheManager.setPolicy(App42CacheManager.Policy.CACHE_FIRST);
+		//App42CacheManager.setPolicy(App42CacheManager.Policy.CACHE_FIRST);
 		//App42API.setOfflineStorage(true);
 		this.userService = App42API.buildUserService();
 		this.storageService = App42API.buildStorageService();
 		this.scoreBoardService = App42API.buildScoreBoardService();
 		this.uploadService = App42API.buildUploadService();
+		this.pushNotificationService = App42API.buildPushNotificationService();
 	}
 
 	/**
@@ -826,5 +832,4 @@ public class AsyncApp42ServiceApi {
 		 */
 		void onGetImageFailed(App42Exception ex);
 	}
-
 }

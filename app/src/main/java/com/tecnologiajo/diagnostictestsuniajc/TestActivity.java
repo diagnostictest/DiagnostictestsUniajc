@@ -69,11 +69,11 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
     /** Controlador de tiempos */
     CountDownTimer countDownTimer;
     private SharedPreferences sharedpreferences;
+    private String dowload_service="F";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
-
 
         textquestion =(TextView) findViewById(R.id.textquestion);
         Q1 =(TextView) findViewById(R.id.txtQ1);
@@ -107,7 +107,9 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
         String diagnostic_dowload=sharedpreferences.getString(docId,"");
         diagnostico = getIntent().getExtras().getString("diagnostico","");
         String dowload = getIntent().getExtras().getString("dowload","");
+        dowload_service= dowload;
         if(dowload.equals("D")){
+
             docDocument=diagnostico;
             Id = docId;
             try {
@@ -118,7 +120,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
                 e.printStackTrace();
             }
             assignQuestion();
-        }else {
+        } else {
             progressDialog = ProgressDialog.show(this, "", "Searching..");
             progressDialog.setCancelable(true);
             /** Obtenemos el servicio App42 */
@@ -186,7 +188,19 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
 
                 progressDialog = ProgressDialog.show(this, "", "Input..");
                 progressDialog.setCancelable(true);
-                asyncService.insertJSONDoc(Constants.App42DBName,"historial",jsonDiagnostico,this);
+                /** Obtenemos el servicio App42 */
+                if(!dowload_service.equals("D")) {
+                    asyncService.insertJSONDoc(Constants.App42DBName, "historial", jsonDiagnostico, this);
+                }else {
+                    progressDialog.dismiss();
+                    Intent intent = new Intent(getApplicationContext(),RsultActivity.class);
+                    intent.putExtra("result",jsonDiagnostico.toString());
+                    intent.putExtra("diagnostico", diagnostico);
+                    intent.putExtra("id", Id);
+                    intent.putExtra("dowload", dowload_service);
+                    startActivity(intent);
+                    finish();
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -294,6 +308,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             intent.putExtra("result",jsonDiagnostico.toString());
             intent.putExtra("diagnostico", diagnostico);
             intent.putExtra("id", Id);
+            intent.putExtra("dowload", dowload_service);
             startActivity(intent);
             finish();
         //}

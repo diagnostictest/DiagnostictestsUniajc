@@ -1,9 +1,12 @@
 package com.tecnologiajo.diagnostictestsuniajc;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -59,6 +62,7 @@ public class AsignatureActivity extends AppCompatActivity implements AsyncApp42S
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_asignature);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
 
         asyncService = AsyncApp42ServiceApi.instance(this);
@@ -169,8 +173,7 @@ public class AsignatureActivity extends AppCompatActivity implements AsyncApp42S
     @Override
     public void onFindDocFailed(App42Exception ex) {
         progressDialog.dismiss();
-        Toast.makeText(this, "Ocurrio un error", Toast.LENGTH_SHORT).show();
-        finish();
+        createAlertDialog("Exception Occurred : " + ex.getMessage());
     }
 
     @Override
@@ -237,5 +240,23 @@ public class AsignatureActivity extends AppCompatActivity implements AsyncApp42S
                 startActivity(intent);
             }
         });
+    }
+
+    /**
+     * Creates the alert dialog.
+     *
+     * @param msg the msg
+     */
+    public void createAlertDialog(String msg) {
+        AlertDialog.Builder alertbox = new AlertDialog.Builder(
+                AsignatureActivity.this);
+        alertbox.setTitle("Response Message");
+        alertbox.setMessage(msg);
+        alertbox.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            // do something when the button is clicked
+            public void onClick(DialogInterface arg0, int arg1) {
+            }
+        });
+        alertbox.show();
     }
 }

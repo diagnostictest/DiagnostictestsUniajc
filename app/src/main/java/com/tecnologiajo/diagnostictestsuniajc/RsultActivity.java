@@ -2,7 +2,9 @@ package com.tecnologiajo.diagnostictestsuniajc;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
@@ -50,6 +52,8 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
     public  String id_creator="";
     private static String  diagnostico = "";
     private static String  iddiagnostico = "";
+    private SharedPreferences sharedpreferences;
+    private static String dowload="F";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,19 +66,28 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
         diagnostico = getIntent().getExtras().getString("diagnostico","");
         iddiagnostico = getIntent().getExtras().getString("id","");
         /** Obtenemos el servicio App42 */
-        progressDialog = ProgressDialog.show(this, "", "Searching..");
-        progressDialog.setCancelable(true);
-        asyncService = AsyncApp42ServiceApi.instance(this);
-        try {
 
-            JSONObject jsonDiagnostico = new JSONObject(docResultado);
-            id_creator=jsonDiagnostico.getString("id_creator");
-            asyncService.findDocByKeyValue(Constants.App42DBName, "historial","id_creator",id_creator,this);
+        dowload = getIntent().getExtras().getString("dowload","");
+        if(!dowload.equals("D")) {
+            progressDialog = ProgressDialog.show(this, "", "Searching..");
+            progressDialog.setCancelable(true);
+            asyncService = AsyncApp42ServiceApi.instance(this);
+            try {
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+                JSONObject jsonDiagnostico = new JSONObject(docResultado);
+                id_creator = jsonDiagnostico.getString("id_creator");
+                asyncService.findDocByKeyValue(Constants.App42DBName, "historial", "id_creator", id_creator, this);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }else{
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            Fragment detalleResult = DetalleResult.newInstance(totalHBuenas,totalHPerdidas,totalHistorial,id_creator);
+            ft.add(R.id.display, detalleResult, "Detail_Result");
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            ft.commit();
         }
-
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -201,7 +214,7 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
             textresult =(TextView) view.findViewById(R.id.textResult);
             iconoResult = (ImageView) view.findViewById(R.id.iconresult);
             calificacion = (RatingBar) view.findViewById(R.id.calificacion);
-            asyncService = AsyncApp42ServiceApi.instance(getActivity());
+            if(!dowload.equals("D")) {asyncService = AsyncApp42ServiceApi.instance(getActivity());}
             return view;
         }
 
@@ -224,7 +237,7 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
                         totalcalificacion += rating;
                         jsonDiagnostico.put("cantidadtest", cantidadtest);
                         jsonDiagnostico.put("totalcalificacion", totalcalificacion);
-                        asyncService.updateDocByDocId(Constants.App42DBName, "diagnosticos", iddiagnostico, jsonDiagnostico, DetalleResult.this);
+                        if(!dowload.equals("D")) {asyncService.updateDocByDocId(Constants.App42DBName, "diagnosticos", iddiagnostico, jsonDiagnostico, DetalleResult.this);}
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -342,8 +355,8 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
 
         @Override
         public void onFindDocFailed(App42Exception ex) {
-            progressDialog.dismiss();
-            createAlertDialog("Exception Occurred : "+ ex.getMessage());
+                progressDialog.dismiss();
+                createAlertDialog("Exception Occurred : "+ ex.getMessage());
         }
 
         @Override
