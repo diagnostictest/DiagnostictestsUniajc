@@ -107,6 +107,7 @@ public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42
                         SharedPreferences.Editor editor = sharedpreferences.edit();
                         editor.putString(convertList.get(position).getId(), convertList.get(position).getSchema());
                         editor.commit();
+                        createAlertDialog("Descarga finalizada");
                     }
                 });
             }else{

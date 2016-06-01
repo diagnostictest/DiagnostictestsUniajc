@@ -1,6 +1,7 @@
 package com.tecnologiajo.diagnostictestsuniajc;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,11 +12,14 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.shephertz.app42.paas.sdk.android.App42Exception;
@@ -116,7 +120,10 @@ public class AsignatureActivity extends AppCompatActivity implements AsyncApp42S
             swichetdowload++;
             return true;
         }
-
+        if (id == R.id.action_byId) {
+            testByCodeDialog();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -255,8 +262,46 @@ public class AsignatureActivity extends AppCompatActivity implements AsyncApp42S
         alertbox.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             // do something when the button is clicked
             public void onClick(DialogInterface arg0, int arg1) {
+                Intent intent = new Intent(getApplicationContext(), TestActivity.class);
+                intent.putExtra("id", "");
+                intent.putExtra("diagnostico", "");
+                intent.putExtra("dowload", "A");
+                startActivity(intent);
             }
         });
         alertbox.show();
     }
+
+    /**
+     * Creates the add code dialog.
+     *
+     */
+    public void testByCodeDialog() {
+        AlertDialog.Builder alertbox = new AlertDialog.Builder(AsignatureActivity.this);
+        //alertbox.setTitle("Test");
+        LayoutInflater inflater = this.getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_layout_code, null);
+        final EditText editText = (EditText) view.findViewById(R.id.addcode);
+        alertbox.setView(view);
+        alertbox.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            // do something when the button is clicked
+            public void onClick(DialogInterface arg0, int arg1) {
+                Intent intent = new Intent(getApplicationContext(), TestActivity.class);
+                String codigo = editText.getText().toString();
+                intent.putExtra("id", "");
+                intent.putExtra("diagnostico", "");
+                intent.putExtra("dowload", "A");
+                intent.putExtra("codigo", codigo);
+                startActivity(intent);
+            }
+        });
+        alertbox.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        alertbox.show();
+    }
+
 }

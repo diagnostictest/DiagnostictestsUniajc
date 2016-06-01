@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@drawable/blue_button"
+    android:layout_width="match_parent"
+    android:layout_height="200dp">
+    <TextView
+        android:id="@+id/textResult"
+        android:layout_width="match_parent"
+        android:text="Group Code"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@android:color/white"
+        android:gravity="center"
+
+        android:textSize="35sp"
+        android:textStyle="bold"
+        android:shadowColor="#8a6603"
+        android:shadowDx="3"
+        android:shadowDy="2"
+        android:shadowRadius="1.8"
+        android:layout_toRightOf="@+id/iconresult"
+        android:layout_height="100dp" />
+    <EditText
+        android:layout_width="match_parent"
+        android:hint="Code"
+        android:gravity="center"
+
+        android:id="@+id/addcode"
+        android:layout_height="wrap_content" />
+</LinearLayout>
