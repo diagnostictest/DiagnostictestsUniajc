@@ -7,18 +7,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
-import com.tecnologiajo.diagnostictestsuniajc.modelos.Asignature;
 import com.tecnologiajo.diagnostictestsuniajc.modelos.Diagnostico;
 
 import org.json.JSONObject;
@@ -27,18 +27,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42ServiceApi.App42StorageServiceListener {
-    /** The async service. */
+    /**
+     * The async service.
+     */
     private AsyncApp42ServiceApi asyncService;
-    /** The progress dialog. */
+    /**
+     * The progress dialog.
+     */
     private ProgressDialog progressDialog;
-    /** The doc id. */
+    /**
+     * The doc id.
+     */
     private String docId = "";
     private ListView listDianostic;
     private DrawableProvider mProvider;
-    private String diagnostico="";
+    private String diagnostico = "";
     private ArrayList<Storage.JSONDocument> jsonDocList;
-    private int swichetdowload=0;
+    private int swichetdowload = 0;
     private SharedPreferences sharedpreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +60,7 @@ public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42
         mProvider = new DrawableProvider(this);
         listDianostic = (ListView) findViewById(R.id.listDiagnoostics);
 
-        docId= getIntent().getExtras().getString("id","");
+        docId = getIntent().getExtras().getString("id", "");
 
         sharedpreferences = getSharedPreferences("diagnosticos", Context.MODE_PRIVATE);
         // temporal
@@ -78,7 +85,7 @@ public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_dowload) {
-            if(swichetdowload%2==0) {
+            if (swichetdowload % 2 == 0) {
                 item.setTitle("List");
                 final List<Diagnostico> convertList = new ArrayList<>();
                 try {
@@ -109,7 +116,7 @@ public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42
                         editor.commit();
                     }
                 });
-            }else{
+            } else {
                 item.setTitle(R.string.action_dowload);
                 final List<Diagnostico> convertList = new ArrayList<>();
                 try {
@@ -123,11 +130,11 @@ public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42
                         diagnostico.setSchema(jsonDocument.getJsonDoc());
                         diagnostico.setCantidadtest(jsonObject.getInt("cantidadtest"));
                         diagnostico.setTotalcalificacion((float) jsonObject.getDouble("totalcalificacion"));
-                        Drawable drawable = mProvider.getRoundWithBorder(diagnostico.getDescripcion().substring(0,1).toUpperCase());
+                        Drawable drawable = mProvider.getRoundWithBorder(diagnostico.getDescripcion().substring(0, 1).toUpperCase());
                         diagnostico.setDrawable(drawable);
                         convertList.add(diagnostico);
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 DiagnosticsAdapter diagnosticsAdapter = new DiagnosticsAdapter(this, 0, convertList);
@@ -176,11 +183,11 @@ public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42
                 diagnostico.setSchema(jsonDocument.getJsonDoc());
                 diagnostico.setCantidadtest(jsonObject.getInt("cantidadtest"));
                 diagnostico.setTotalcalificacion((float) jsonObject.getDouble("totalcalificacion"));
-                Drawable drawable = mProvider.getRoundWithBorder(diagnostico.getDescripcion().substring(0,1).toUpperCase());
+                Drawable drawable = mProvider.getRoundWithBorder(diagnostico.getDescripcion().substring(0, 1).toUpperCase());
                 diagnostico.setDrawable(drawable);
                 convertList.add(diagnostico);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         DiagnosticsAdapter diagnosticsAdapter = new DiagnosticsAdapter(this, 0, convertList);
@@ -194,6 +201,7 @@ public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42
                 startActivity(intent);
             }
         });
+        listDianostic.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
     }
 
     @Override
@@ -204,7 +212,7 @@ public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42
     @Override
     public void onFindDocFailed(App42Exception ex) {
         progressDialog.dismiss();
-        createAlertDialog("Exception Occurred : " + ex.getMessage());
+        createAlertDialog("No se encontraron diagnosticos asociados a esta asignatura");
     }
 
     @Override
@@ -218,16 +226,18 @@ public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42
      * @param msg the msg
      */
     public void createAlertDialog(String msg) {
-        AlertDialog.Builder alertbox = new AlertDialog.Builder(
-                DiagnosticsActivity.this);
-        alertbox.setTitle("Response Message");
+        AlertDialog.Builder alertbox = new AlertDialog.Builder(DiagnosticsActivity.this);
         alertbox.setMessage(msg);
         alertbox.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             // do something when the button is clicked
-            public void onClick(DialogInterface arg0, int arg1)
-            {
+            public void onClick(DialogInterface arg0, int arg1) {
+                closeActivity();
             }
         });
         alertbox.show();
+    }
+
+    public void closeActivity() {
+        finish();
     }
 }
