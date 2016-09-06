@@ -4,6 +4,11 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <permission
+        android:name="com.tecnologiajo.diagnostictestsuniajc.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -43,6 +48,38 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
+
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.tecnologiajo.diagnostictestsuniajc" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="com.tecnologiajo.diagnostictestsuniajc.GCMService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="com.tecnologiajo.diagnostictestsuniajc.GCMInstanceIDListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="com.tecnologiajo.diagnostictestsuniajc.RegistrationIntentService"
+            android:exported="false">
+        </service>
+
         <receiver android:name="com.shephertz.app42.paas.sdk.android.AlarmReceiver"/>
         <service android:name="com.shephertz.app42.paas.sdk.android.App42DataSyncService"/>
     </application>

@@ -243,12 +243,6 @@
             android:id="@+id/nextlayout"
             android:background="#fcef00"
             android:layout_height="match_parent">
-            <ImageView
-                android:id="@+id/imgnextlayout"
-                android:layout_width="match_parent"
-                android:layout_weight="50"
-                android:layout_height="wrap_content"
-                android:src="@drawable/clock"/>
             <TextView
                 android:id="@+id/txtnextlayout"
                 android:layout_width="match_parent"
@@ -263,16 +257,24 @@
                 android:shadowDy="2"
                 android:shadowRadius="1.8"
                 android:layout_height="wrap_content" />
+            <ImageView
+                android:id="@+id/imgnextlayout"
+                android:layout_width="match_parent"
+                android:layout_weight="50"
+                android:layout_height="wrap_content"
+                android:src="@drawable/clock"/>
             <Button
                 android:layout_width="match_parent"
                 android:id="@+id/btnnextlayout"
                 android:layout_weight="20"
                 android:text="next"
                 android:textSize="35sp"
+                android:layout_margin="20dp"
                 android:textStyle="bold"
                 android:shadowColor="#a6a39b"
                 android:shadowDx="2"
                 android:shadowDy="2"
+                android:background="@drawable/yellow_button"
                 android:shadowRadius="1.8"
                 android:layout_gravity="center"
                 android:onClick="nextQuestion"

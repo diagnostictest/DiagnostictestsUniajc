@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -17,6 +19,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,6 +28,7 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Animation;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -40,6 +44,12 @@ import com.tecnologiajo.diagnostictestsuniajc.modelos.Diagnosticos;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 
 public class TestActivity extends AppCompatActivity implements AsyncApp42ServiceApi.App42StorageServiceListener{
 
@@ -158,30 +168,31 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
     }
 
 
-    public void TestType(String opt){
+    public void TestType(String opt,String texto,String uri){
         LayoutInflater inflater = LayoutInflater.from(this);
         int ids = R.id.contentQ;
         LinearLayout linearLayout = (LinearLayout) findViewById(ids);
         linearLayout.removeAllViews();
         switch (opt){
             case "TEXTO":
-                RelativeLayout.LayoutParams params=new RelativeLayout.LayoutParams
-                        ((int) RelativeLayout.LayoutParams.MATCH_PARENT,(int) RelativeLayout.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams params=new LinearLayout.LayoutParams
+                        ((int) LinearLayout.LayoutParams.MATCH_PARENT,(int) LinearLayout.LayoutParams.MATCH_PARENT);
                 params.leftMargin = 10;
                 params.topMargin  = 10;
                 textquestion = new TextView(this);
                 textquestion.setGravity(Gravity.CENTER);
                 textquestion.setTextColor(Color.RED);
-                textquestion.setTextSize(25);
-                textquestion.setShadowLayer(1,2,2,Color.GRAY);
+                textquestion.setTextSize(15);
+                textquestion.setShadowLayer(1, 2, 2, Color.GRAY);
                 textquestion.setLayoutParams(params);
+                textquestion.setText(texto);
                 linearLayout.addView(textquestion);
                 break;
             case "AUDIO":
-                mediaPlayer = MediaPlayer.create(this, Uri.parse("http://programmerguru.com/android-tutorial/wp-content/uploads/2013/04/hosannatelugu.mp3"));
+                mediaPlayer = MediaPlayer.create(this, Uri.parse(uri));
 
-                RelativeLayout.LayoutParams params1=new RelativeLayout.LayoutParams
-                        ((int) RelativeLayout.LayoutParams.MATCH_PARENT,(int) RelativeLayout.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams params1=new LinearLayout.LayoutParams
+                        ((int) LinearLayout.LayoutParams.MATCH_PARENT,(int) LinearLayout.LayoutParams.WRAP_CONTENT);
                 params1.leftMargin = 5;
                 params1.topMargin  = 5;
                 textquestion = new TextView(this);
@@ -191,85 +202,60 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
                 textquestion.setShadowLayer(1, 2, 2, Color.GRAY);
                 textquestion.setLayoutParams(params1);
 
-                RelativeLayout.LayoutParams paramsskb=new RelativeLayout.LayoutParams
-                        ((int) RelativeLayout.LayoutParams.MATCH_PARENT,(int) RelativeLayout.LayoutParams.WRAP_CONTENT);
-                seekBar = new SeekBar(this);
-                seekBar.setLayoutParams(paramsskb);
-                seekBar.setClickable(false);
-                seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                        if (fromUser) {
-                            seekChanged(seekBar, progress, fromUser);
-                        }
-                    }
 
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
 
-                    }
-
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-
-                    }
-                });
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                RelativeLayout.LayoutParams paramsbtn=new RelativeLayout.LayoutParams
-                        ((int) RelativeLayout.LayoutParams.WRAP_CONTENT,(int) RelativeLayout.LayoutParams.WRAP_CONTENT);
-                final Button play = new Button(this);
-                paramsbtn.addRule(LinearLayout.LAYOUT_DIRECTION_INHERIT);
-                play.setText("Play");
-                play.setGravity(Gravity.CENTER);
+                LinearLayout.LayoutParams paramsbtn=new LinearLayout.LayoutParams
+                        ((int) LinearLayout.LayoutParams.WRAP_CONTENT,(int) LinearLayout.LayoutParams.WRAP_CONTENT);
+                final ImageButton play = new ImageButton(this);
+                paramsbtn.gravity=Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL;
+                play.setImageResource(R.drawable.speaker);
                 play.setLayoutParams(paramsbtn);
+                play.setBackgroundColor(Color.TRANSPARENT);
                 play.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (!mediaPlayer.isPlaying()) {
-                            mediaPlayer.start();
-                            play.setText("stop");
-                            updateSeekBar();
+                                mediaPlayer.start();
 
-                        } else {
-                            mediaPlayer.stop();
-                            play.setText("play");
-                            seekBar.setProgress(0);
-                            seekBar.invalidate();
                         }
                     }
                 });
-                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mediaPlayer) {
-                        mediaPlayer.stop();
-                        seekBar.setProgress(0);
-                        seekBar.invalidate();
-                    }
-                });
+
                 linearLayout.addView(textquestion);
-                linearLayout.addView(seekBar);
+
                 linearLayout.addView(play);
+                break;
+            case "IMAGE":
+                LinearLayout.LayoutParams paramimg=new LinearLayout.LayoutParams
+                        ((int) LinearLayout.LayoutParams.MATCH_PARENT,(int) LinearLayout.LayoutParams.MATCH_PARENT);
+                paramimg.leftMargin = 5;
+                paramimg.topMargin  = 5;
+                ImageView imageView = new ImageView(this);
+                imageView.setImageBitmap(getImageBitmap(uri));
+                imageView.setEnabled(true);
+                imageView.setLayoutParams(paramimg);
+                linearLayout.addView(imageView);
                 break;
         }
     }
-    public void seekChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        mediaPlayer.seekTo(progress);
-    }
 
-    public void updateSeekBar() {
-        seekBar.setProgress(mediaPlayer.getCurrentPosition()/100);
-
-        if (mediaPlayer.isPlaying()) {
-            Runnable notification = new Runnable() {
-                public void run() {
-                    updateSeekBar();
-                }
-            };
-            myHandler.postDelayed(notification, 1000);
+    private Bitmap getImageBitmap(String url) {
+        Bitmap bm = null;
+        try {
+            URL aURL = new URL(url);
+            URLConnection conn = aURL.openConnection();
+            conn.connect();
+            InputStream is = conn.getInputStream();
+            BufferedInputStream bis = new BufferedInputStream(is);
+            bm = BitmapFactory.decodeStream(bis);
+            bis.close();
+            is.close();
+        } catch (IOException e) {
+            Log.e(null, "Error getting bitmap", e);
         }
+        return bm;
     }
-
-
 
     public void sincronizatedTest(){
         countDownTimer = new CountDownTimer(30000, 1000) {
@@ -278,10 +264,9 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             }
 
             public void onFinish() {
-                mediaPlayer.stop();
                 txtnextlayout.setText("Incorrect!");
-                imgnextlayout.setImageResource(R.drawable.xx);
-                nextlayout.setBackgroundColor(Color.parseColor("#FFF20404"));
+                imgnextlayout.setImageResource(R.drawable.incorrect);
+                nextlayout.setBackgroundColor(Color.parseColor("#ae2929"));
                 viewAnimator.showNext();
             }
         }.start();
@@ -296,8 +281,8 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
 
             jsonObject1  = jsonArray.getJSONObject(next);
             tipo = jsonObject1.getString("tipo");
-            TestType(tipo);
-            textquestion.setText(jsonObject1.getString("descripcion"));
+            TestType(tipo, jsonObject1.getString("descripcion"), jsonObject1.getString("uri"));
+
             JSONObject jsonObject2  = new JSONObject(jsonObject1.getString("respuesta1"));
             JSONObject jsonObject3  = new JSONObject(jsonObject1.getString("respuesta2"));
             JSONObject jsonObject4  = new JSONObject(jsonObject1.getString("respuesta3"));
@@ -352,13 +337,13 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta1"));
             jsonObject.put("selected", true);
             if(jsonObject.getBoolean("flag")){
-                txtnextlayout.setText("Correcto!");
-                imgnextlayout.setImageResource(R.drawable.tick);
+                txtnextlayout.setText("Correct!");
+                imgnextlayout.setImageResource(R.drawable.correct);
                 nextlayout.setBackgroundColor(Color.parseColor("#FF1A831A"));
             }else{
-                txtnextlayout.setText("Incorrecto!");
-                imgnextlayout.setImageResource(R.drawable.xx);
-                nextlayout.setBackgroundColor(Color.parseColor("#FFF20404"));
+                txtnextlayout.setText("Incorrect!");
+                imgnextlayout.setImageResource(R.drawable.incorrect);
+                nextlayout.setBackgroundColor(Color.parseColor("#ae2929"));
             }
             jsonObject1.put("respuesta1", jsonObject);
             countDownTimer.cancel();
@@ -373,12 +358,13 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta2"));
             jsonObject.put("selected", true);
             if(jsonObject.getBoolean("flag")){
-                txtnextlayout.setText("Correcto!");
-                imgnextlayout.setImageResource(R.drawable.tick);
+                txtnextlayout.setText("Correct!");
+                imgnextlayout.setImageResource(R.drawable.correct);
                 nextlayout.setBackgroundColor(Color.parseColor("#FF1A831A"));
             }else {
-                txtnextlayout.setText("Incorrecto!");
-                nextlayout.setBackgroundColor(Color.parseColor("#FFF20404"));
+                txtnextlayout.setText("Incorrect!");
+                imgnextlayout.setImageResource(R.drawable.incorrect);
+                nextlayout.setBackgroundColor(Color.parseColor("#ae2929"));
             }
             jsonObject1.put("respuesta2", jsonObject);
             countDownTimer.cancel();
@@ -393,12 +379,13 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta3"));
             jsonObject.put("selected", true);
             if(jsonObject.getBoolean("flag")){
-                txtnextlayout.setText("Correcto!");
-                imgnextlayout.setImageResource(R.drawable.tick);
+                txtnextlayout.setText("Correct!");
+                imgnextlayout.setImageResource(R.drawable.correct);
                 nextlayout.setBackgroundColor(Color.parseColor("#FF1A831A"));
             }else{
-                txtnextlayout.setText("Incorrecto!");
-                nextlayout.setBackgroundColor(Color.parseColor("#FFF20404"));
+                txtnextlayout.setText("Incorrect!");
+                imgnextlayout.setImageResource(R.drawable.incorrect);
+                nextlayout.setBackgroundColor(Color.parseColor("#ae2929"));
             }
             jsonObject1.put("respuesta3", jsonObject);
             countDownTimer.cancel();
@@ -413,12 +400,13 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta4"));
             jsonObject.put("selected", true);
             if(jsonObject.getBoolean("flag")){
-                txtnextlayout.setText("Correcto!");
-                imgnextlayout.setImageResource(R.drawable.tick);
+                txtnextlayout.setText("Correct!");
+                imgnextlayout.setImageResource(R.drawable.correct);
                 nextlayout.setBackgroundColor(Color.parseColor("#FF1A831A"));
             }else{
-                txtnextlayout.setText("Incorrecto!");
-                nextlayout.setBackgroundColor(Color.parseColor("#FFF20404"));
+                txtnextlayout.setText("Incorrect!");
+                imgnextlayout.setImageResource(R.drawable.incorrect);
+                nextlayout.setBackgroundColor(Color.parseColor("#ae2929"));
             }
             jsonObject1.put("respuesta4", jsonObject);
             countDownTimer.cancel();
@@ -515,3 +503,5 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
         alertbox.show();
     }
 }
+
+
