@@ -26,7 +26,7 @@ public class GCMService extends GcmListenerService {
 
     private void sendNotification(String message) {
 
-        Intent intent = new Intent(this, AsignatureActivity.class);
+        Intent intent = new Intent(this, TestFragment.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.setAction(AsignatureActivity.MESSAGE_RECEIVED);
         intent.putExtra("message", message);

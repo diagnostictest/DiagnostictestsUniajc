@@ -37,6 +37,12 @@ public class ContentManager {
 
     // ID Content (make variable public to access from outside)
     public static final String ID_CONTENT = "id_content";
+
+    // ID Content (make variable public to access from outside)
+    public static final String CONTENT_TEMP = "content";
+
+    // ID Content (make variable public to access from outside)
+    public static final String IS_CONTENT_TEMP = "IsContentTemp";
     // Constructor
     public ContentManager(Context context){
         this._context = context;
@@ -59,6 +65,16 @@ public class ContentManager {
         editor.commit();
     }
 
+    /**
+     * Create login session
+     * */
+    public void createContentTestTemp(String content){
+        // Storing content in pref
+        editor.putString(CONTENT_TEMP, content);
+        editor.putBoolean(IS_CONTENT_TEMP, true);
+        // commit changes
+        editor.commit();
+    }
 
 
     /**
@@ -67,5 +83,20 @@ public class ContentManager {
     // Get Login State
     public boolean isAdd(){
         return pref.getBoolean(IS_LOGIN, false);
+    }
+
+    // Get Login State
+    public boolean isContentTemp(){
+        return pref.getBoolean(IS_CONTENT_TEMP, false);
+    }
+
+    public String getContentTemp(){
+        return  pref.getString(CONTENT_TEMP, "");
+    }
+
+    public void closeContentTemp(){
+        editor.putString(CONTENT_TEMP,"");
+        editor.putBoolean(IS_CONTENT_TEMP,false);
+        editor.commit();
     }
 }

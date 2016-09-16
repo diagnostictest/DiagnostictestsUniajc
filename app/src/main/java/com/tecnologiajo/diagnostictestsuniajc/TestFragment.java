@@ -14,17 +14,14 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
-
-import android.support.v7.widget.Toolbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Animation;
 import android.widget.Button;
@@ -32,14 +29,18 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
+
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewAnimator;
 
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
-
-import com.tecnologiajo.diagnostictestsuniajc.modelos.Diagnosticos;
+import com.tecnologiajo.diagnostictestsuniajc.modelos.ContentManager;
+import com.tecnologiajo.diagnostictestsuniajc.modelos.Result;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,16 +49,24 @@ import org.json.JSONObject;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class TestActivity extends AppCompatActivity implements AsyncApp42ServiceApi.App42StorageServiceListener{
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+public class TestFragment extends Fragment implements AsyncApp42ServiceApi.App42StorageServiceListener{
 
     public boolean seleccion,finalizar;
     public ViewAnimator viewAnimator;
     public TextView timeTest,textquestion,Q1,Q2,Q3,Q4,itempregunta,txtnextlayout;
     public ImageView imgnextlayout;
     public Button btnnextlayout;
+    public RelativeLayout btnanswer1,btnanswer2,btnanswer3,btnanswer4;
     public LinearLayout nextlayout;
 
     public RelativeLayout relativeLayout;
@@ -86,37 +95,92 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
     /** contador para las preguntas */
     private int next;
     /** Controlador de tiempos */
-    CountDownTimer countDownTimer;
-    private SharedPreferences sharedpreferences;
+    private CountDownTimer countDownTimer;
     private String dowload_service="F";
+    private MediaPlayer mediaPlayer;
+    private String dowload;
+    private ContentManager contentManager;
+    private LinearLayout linearLayout;
+    private JSONObject jsonEmit;
+    private Socket mSocket;
+    private String codigo;
+    {
+        try {
+            mSocket = IO.socket(Constants.HOSTSERVER);
+        } catch (URISyntaxException e) {}
+    }
 
-    double startTime = 0;
-    double finalTime = 0;
-    final Handler myHandler = new Handler();;
-    int oneTimeOnly=0;
-    MediaPlayer mediaPlayer;
-    SeekBar seekBar;
+    public static TestFragment newInstance(Bundle arguments){
+        TestFragment f = new TestFragment();
+        if(arguments != null){
+            f.setArguments(arguments);
+        }
+        return f;
+    }
+
+    public TestFragment() {
+        super();
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test);
+        //setContentView(R.layout.activity_diagnostics);
+        View view = inflater.inflate(R.layout.fragment_test, container, false);
+
+        contentManager = new ContentManager(getActivity());
 
         //textquestion =(TextView) findViewById(R.id.textquestion);
-        Q1 =(TextView) findViewById(R.id.txtQ1);
-        Q2 =(TextView) findViewById(R.id.txtQ2);
-        Q3 =(TextView) findViewById(R.id.txtQ3);
-        Q4 =(TextView) findViewById(R.id.txtQ4);
-        itempregunta =(TextView) findViewById(R.id.idpregunta);
-        txtnextlayout =(TextView) findViewById(R.id.txtnextlayout);
-        timeTest = (TextView) findViewById(R.id.timeTest);
+        Q1 =(TextView) view.findViewById(R.id.txtQ1);
+        Q2 =(TextView) view.findViewById(R.id.txtQ2);
+        Q3 =(TextView) view.findViewById(R.id.txtQ3);
+        Q4 =(TextView) view.findViewById(R.id.txtQ4);
 
-        imgnextlayout = (ImageView) findViewById(R.id.imgnextlayout);
-        btnnextlayout = (Button) findViewById(R.id.btnnextlayout);
-        nextlayout = (LinearLayout) findViewById(R.id.nextlayout);
-        viewAnimator = (ViewAnimator)findViewById(R.id.viewanimator);
+        itempregunta =(TextView) view.findViewById(R.id.idpregunta);
+        txtnextlayout =(TextView) view.findViewById(R.id.txtnextlayout);
+        timeTest = (TextView) view.findViewById(R.id.timeTest);
+        linearLayout= (LinearLayout) view.findViewById(R.id.contentQ);
+        imgnextlayout = (ImageView) view.findViewById(R.id.imgnextlayout);
+        btnnextlayout = (Button) view.findViewById(R.id.btnnextlayout);
+        btnnextlayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nextQuestion();
+            }
+        });
+        btnanswer1 = (RelativeLayout) view.findViewById(R.id.Q1);
+        btnanswer1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Answer1();
+            }
+        });
+        btnanswer2 = (RelativeLayout) view.findViewById(R.id.Q2);
+        btnanswer2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Answer2();
+            }
+        });
+        btnanswer3 = (RelativeLayout) view.findViewById(R.id.Q3);
+        btnanswer3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Answer3();
+            }
+        });
+        btnanswer4 = (RelativeLayout) view.findViewById(R.id.Q4);
+        btnanswer4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Answer4();
+            }
+        });
+        nextlayout = (LinearLayout) view.findViewById(R.id.nextlayout);
+        viewAnimator = (ViewAnimator) view.findViewById(R.id.viewanimator);
 
-        slide_in_left = AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left);
-        slide_out_right = AnimationUtils.loadAnimation(this, android.R.anim.slide_out_right);
+        slide_in_left = AnimationUtils.loadAnimation(getActivity(), android.R.anim.slide_in_left);
+        slide_out_right = AnimationUtils.loadAnimation(getActivity(), android.R.anim.slide_out_right);
 
         viewAnimator.setInAnimation(slide_in_left);
         viewAnimator.setOutAnimation(slide_out_right);
@@ -125,15 +189,13 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
         finalizar=false;
         next=0;
         /** Obtenemos el id del diagnostico*/
-        docId= getIntent().getExtras().getString("id", "");
+        docId= getArguments().getString("id", "");
         /** obtenemos la prueba si se descargo */
-        sharedpreferences = getSharedPreferences("diagnosticos", Context.MODE_PRIVATE);
-        String diagnostic_dowload=sharedpreferences.getString(docId,"");
-        diagnostico = getIntent().getExtras().getString("diagnostico","");
-        String dowload = getIntent().getExtras().getString("dowload","");
+
+        diagnostico = getArguments().getString("diagnostico","");
+        dowload = getArguments().getString("dowload","");
         dowload_service= dowload;
         if(dowload.equals("D")){
-
             docDocument=diagnostico;
             Id = docId;
             try {
@@ -145,33 +207,74 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             }
             assignQuestion();
         } else if(dowload.equals("A")){
-            String codigo = getIntent().getExtras().getString("codigo","");
-            progressDialog = ProgressDialog.show(this, "", "Searching..");
+            mSocket.connect();
+
+            codigo = getArguments().getString("codigo","");
+            jsonEmit = new JSONObject();
+            try {
+                jsonEmit.put("name",getArguments().getString("name",""));
+                jsonEmit.put("device",getArguments().getString("device",""));
+                jsonEmit.put("connect",true);
+                jsonEmit.put("isadd",true);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            mSocket.emit(codigo,jsonEmit);
+            progressDialog = ProgressDialog.show(getActivity(), "", "Searching..");
+            progressDialog.setCancelable(true);
+            btnnextlayout.setVisibility(View.INVISIBLE);
+            /** Obtenemos el servicio App42 */
+            if(!contentManager.isContentTemp()) {
+                asyncService = AsyncApp42ServiceApi.instance(getActivity());
+                asyncService.findDocByDocId(Constants.App42DBName, "diagnosticos", docId, this);
+            }else{
+                try {
+                    JSONObject jsonObject = new JSONObject(contentManager.getContentTemp());
+                    jsonArray = new JSONArray(jsonObject.getString("preguntas"));
+                    id_creator = jsonObject.getString("id_creator");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            mSocket.on(codigo, new Emitter.Listener() {
+                @Override
+                public void call(final Object... args) {
+                    getActivity().runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            JSONObject data = (JSONObject) args[0];
+                            try {
+                                if(data.getBoolean("isnext")) {
+                                    nextQuestion();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            });
+        } else {
+            progressDialog = ProgressDialog.show(getActivity(), "", "Searching..");
             progressDialog.setCancelable(true);
             /** Obtenemos el servicio App42 */
-            asyncService = AsyncApp42ServiceApi.instance(this);
-            asyncService.findDocByKeyValue(Constants.App42DBName, "diagnosticos", "codigo", codigo, this);
-        } else{
-            progressDialog = ProgressDialog.show(this, "", "Searching..");
-            progressDialog.setCancelable(true);
-            /** Obtenemos el servicio App42 */
-            asyncService = AsyncApp42ServiceApi.instance(this);
+            asyncService = AsyncApp42ServiceApi.instance(getActivity());
             asyncService.findDocByDocId(Constants.App42DBName, "diagnosticos", docId, this);
         }
         /** definimos la primera pregunta de la prueba **/
         itempregunta.setText("Q"+String.valueOf((next + 1)));
         /** Json para el resultado final **/
         jsonArrayResult = new JSONArray();
-
-
-
+        return view;
     }
 
 
     public void TestType(String opt,String texto,String uri){
-        LayoutInflater inflater = LayoutInflater.from(this);
-        int ids = R.id.contentQ;
-        LinearLayout linearLayout = (LinearLayout) findViewById(ids);
+
+
         linearLayout.removeAllViews();
         switch (opt){
             case "TEXTO":
@@ -179,7 +282,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
                         ((int) LinearLayout.LayoutParams.MATCH_PARENT,(int) LinearLayout.LayoutParams.MATCH_PARENT);
                 params.leftMargin = 10;
                 params.topMargin  = 10;
-                textquestion = new TextView(this);
+                textquestion = new TextView(getActivity());
                 textquestion.setGravity(Gravity.CENTER);
                 textquestion.setTextColor(Color.RED);
                 textquestion.setTextSize(15);
@@ -189,13 +292,13 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
                 linearLayout.addView(textquestion);
                 break;
             case "AUDIO":
-                mediaPlayer = MediaPlayer.create(this, Uri.parse(uri));
+                mediaPlayer = MediaPlayer.create(getActivity(), Uri.parse(uri));
 
                 LinearLayout.LayoutParams params1=new LinearLayout.LayoutParams
                         ((int) LinearLayout.LayoutParams.MATCH_PARENT,(int) LinearLayout.LayoutParams.WRAP_CONTENT);
                 params1.leftMargin = 5;
                 params1.topMargin  = 5;
-                textquestion = new TextView(this);
+                textquestion = new TextView(getActivity());
                 textquestion.setGravity(Gravity.CENTER);
                 textquestion.setTextColor(Color.RED);
                 textquestion.setTextSize(15);
@@ -207,7 +310,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 LinearLayout.LayoutParams paramsbtn=new LinearLayout.LayoutParams
                         ((int) LinearLayout.LayoutParams.WRAP_CONTENT,(int) LinearLayout.LayoutParams.WRAP_CONTENT);
-                final ImageButton play = new ImageButton(this);
+                final ImageButton play = new ImageButton(getActivity());
                 paramsbtn.gravity=Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL;
                 play.setImageResource(R.drawable.speaker);
                 play.setLayoutParams(paramsbtn);
@@ -231,7 +334,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
                         ((int) LinearLayout.LayoutParams.MATCH_PARENT,(int) LinearLayout.LayoutParams.MATCH_PARENT);
                 paramimg.leftMargin = 5;
                 paramimg.topMargin  = 5;
-                ImageView imageView = new ImageView(this);
+                ImageView imageView = new ImageView(getActivity());
                 imageView.setImageBitmap(getImageBitmap(uri));
                 imageView.setEnabled(true);
                 imageView.setLayoutParams(paramimg);
@@ -295,8 +398,33 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             e.printStackTrace();
         }
     }
+
+
+    public void sendAnswer(String answer){
+        Result requestBody = new Result();
+        requestBody.setDescripcion(answer);
+        requestBody.setEstado(true);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.HOSTSERVER)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        RequestInterface request = retrofit.create(RequestInterface.class);
+        Call<Result> call = request.sednAnswer(requestBody);
+        call.enqueue(new Callback<Result>() {
+            @Override
+            public void onResponse(Call<Result> call, Response<Result> response) {
+                Result responseBody = response.body();
+            }
+
+            @Override
+            public void onFailure(Call<Result> call, Throwable t) {
+            }
+        });
+    }
+
     /** pasa a la siguientee pregunta */
-    public void nextQuestion(View view){
+    public  void nextQuestion(){
         if(next<(jsonArray.length()-1)) {
             next++;
             itempregunta.setText("Q" + String.valueOf((next + 1)));
@@ -306,33 +434,53 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
 
         }else{
             try {
+                /*if(countDownTimer!=null) {
+                    countDownTimer.cancel();
+                    countDownTimer= null;
+                }*/
+
                 jsonArrayResult.put(jsonObject1);
                 jsonDiagnostico.put("preguntas", jsonArrayResult);
                 jsonDiagnostico.put("id_usuario","");
                 jsonDiagnostico.put("id_creator",id_creator);
 
-                progressDialog = ProgressDialog.show(this, "", "Input..");
+                progressDialog = ProgressDialog.show(getActivity(), "", "Input..");
                 progressDialog.setCancelable(true);
                 /** Obtenemos el servicio App42 */
                 if(!dowload_service.equals("D")) {
                     asyncService.insertJSONDoc(Constants.App42DBName, "historial", jsonDiagnostico, this);
                 }else {
                     progressDialog.dismiss();
-                    Intent intent = new Intent(getApplicationContext(),RsultActivity.class);
+                    contentManager.closeContentTemp();
+                    Intent intent = new Intent(getActivity(),RsultActivity.class);
                     intent.putExtra("result",jsonDiagnostico.toString());
                     intent.putExtra("diagnostico", diagnostico);
                     intent.putExtra("id", Id);
                     intent.putExtra("dowload", dowload_service);
                     startActivity(intent);
-                    finish();
+
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
     }
+
+    public void sendSelected(){
+        if(!codigo.isEmpty()) {
+            try {
+                jsonEmit.put("termined", true);
+                jsonEmit.put("isadd",false);
+                mSocket.emit(codigo, jsonEmit);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
     /** selecciona repuesta opcion 1 */
-    public void Answer1(View view){
+    public void Answer1(){
         try {
             JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta1"));
             jsonObject.put("selected", true);
@@ -348,12 +496,14 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             jsonObject1.put("respuesta1", jsonObject);
             countDownTimer.cancel();
             viewAnimator.showNext();
+            sendSelected();
+            //sendAnswer("1");
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
     /** selecciona repuesta opcion 2 */
-    public void Answer2(View view){
+    public void Answer2(){
         try {
             JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta2"));
             jsonObject.put("selected", true);
@@ -369,12 +519,14 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             jsonObject1.put("respuesta2", jsonObject);
             countDownTimer.cancel();
             viewAnimator.showNext();
+            sendSelected();
+            //sendAnswer("2");
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
     /** selecciona repuesta opcion 3 */
-    public void Answer3(View view){
+    public void Answer3(){
         try {
             JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta3"));
             jsonObject.put("selected", true);
@@ -390,12 +542,14 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             jsonObject1.put("respuesta3", jsonObject);
             countDownTimer.cancel();
             viewAnimator.showNext();
+            sendSelected();
+            //sendAnswer("3");
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
     /** selecciona repuesta opcion 4 */
-    public void Answer4(View view){
+    public void Answer4(){
         try {
             JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta4"));
             jsonObject.put("selected", true);
@@ -411,6 +565,8 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             jsonObject1.put("respuesta4", jsonObject);
             countDownTimer.cancel();
             viewAnimator.showNext();
+            sendSelected();
+            //sendAnswer("4");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -432,13 +588,12 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
 
         }else{*/
             progressDialog.dismiss();
-            Intent intent = new Intent(getApplicationContext(),RsultActivity.class);
+            Intent intent = new Intent(getActivity(),RsultActivity.class);
             intent.putExtra("result",jsonDiagnostico.toString());
             intent.putExtra("diagnostico", diagnostico);
             intent.putExtra("id", Id);
             intent.putExtra("dowload", dowload_service);
             startActivity(intent);
-            finish();
         //}
 
     }
@@ -455,6 +610,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             Id = response.getJsonDocList().get(0).getDocId();
             try {
                 jsonDiagnostico = new JSONObject(docDocument);
+                contentManager.createContentTestTemp(docDocument);
                 jsonArray = new JSONArray(jsonDiagnostico.getString("preguntas"));
                 id_creator = jsonDiagnostico.getString("id_creator");
 
@@ -469,6 +625,18 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
             progressDialog.dismiss();
         }*/
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        contentManager.closeContentTemp();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        contentManager.closeContentTemp();
     }
 
     @Override
@@ -491,7 +659,7 @@ public class TestActivity extends AppCompatActivity implements AsyncApp42Service
      * @param msg the msg
      */
     public void createAlertDialog(String msg) {
-        AlertDialog.Builder alertbox = new AlertDialog.Builder(TestActivity.this);
+        AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
         alertbox.setTitle("Response Message");
         alertbox.setMessage(msg);
         alertbox.setPositiveButton("Ok", new DialogInterface.OnClickListener() {

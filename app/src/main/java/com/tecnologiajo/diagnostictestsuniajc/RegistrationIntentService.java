@@ -120,6 +120,10 @@ public class RegistrationIntentService extends IntentService  {
                 System.out.println("DeviceToken is " + pushNotification.getDeviceToken());
 
                 contentManager.createContentTestCode(pushNotification.getUserName(),pushNotification.getDeviceToken(),true);
+                Intent intent = new Intent(TestCodeGroupActivity.REGISTRATION_PROCESS);
+                intent.putExtra("result", pushNotification.getUserName());
+                intent.putExtra("message", "Registro con exito");
+                LocalBroadcastManager.getInstance(RegistrationIntentService.this).sendBroadcast(intent);
             }
             public void onException(Exception ex)
             {

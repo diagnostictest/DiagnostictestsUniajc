@@ -2,31 +2,32 @@ package com.tecnologiajo.diagnostictestsuniajc;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
+
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ListFragment;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView;
+import android.view.ViewGroup;
+
 import android.widget.AdapterView;
 import android.widget.ListView;
-
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
 import com.tecnologiajo.diagnostictestsuniajc.modelos.Diagnostico;
-
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42ServiceApi.App42StorageServiceListener {
+public class DiagnosticsFragmentList extends ListFragment implements AdapterView.OnItemClickListener,AsyncApp42ServiceApi.App42StorageServiceListener {
     /**
      * The async service.
      */
@@ -45,45 +46,51 @@ public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42
     private ArrayList<Storage.JSONDocument> jsonDocList;
     private int swichetdowload = 0;
     private SharedPreferences sharedpreferences;
+    private static List<Diagnostico> convertList;
+    public static DiagnosticsFragmentList newInstance(Bundle arguments){
+        DiagnosticsFragmentList f = new DiagnosticsFragmentList();
+        if(arguments != null){
+            f.setArguments(arguments);
+        }
+        return f;
+    }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_diagnostics);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-
-        asyncService = AsyncApp42ServiceApi.instance(this);
-        mProvider = new DrawableProvider(this);
-        listDianostic = (ListView) findViewById(R.id.listDiagnoostics);
-
-        docId = getIntent().getExtras().getString("id", "");
-
-        sharedpreferences = getSharedPreferences("diagnosticos", Context.MODE_PRIVATE);
-        // temporal
-        progressDialog = ProgressDialog.show(this, "", "Searching..");
-        progressDialog.setCancelable(true);
-        asyncService.findDocByKeyValue(Constants.App42DBName, "diagnosticos", "id_creator", docId, this);
+    public  DiagnosticsFragmentList()
+    {
+        super();
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        View view = inflater.inflate(R.layout.list_fragment , container, false);
+
+        asyncService = AsyncApp42ServiceApi.instance(getActivity());
+        mProvider = new DrawableProvider(getActivity());
+
+
+        docId = getArguments().getString("id", "");
+
+        //sharedpreferences = getSharedPreferences("diagnosticos", Context.MODE_PRIVATE);
+        // temporal
+        progressDialog = ProgressDialog.show(getActivity(), "", "Searching..");
+        progressDialog.setCancelable(true);
+        asyncService.findDocByKeyValue(Constants.App42DBName, "diagnosticos", "id_creator", docId, this);
+        return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        getActivity().getMenuInflater().inflate(R.menu.menu_main1, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_dowload) {
             if (swichetdowload % 2 == 0) {
                 item.setTitle("List");
@@ -106,7 +113,7 @@ public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                DiagnosticsAdapter diagnosticsAdapter = new DiagnosticsAdapter(this, 0, true, convertList);
+                DiagnosticsAdapter diagnosticsAdapter = new DiagnosticsAdapter(getActivity(), 0, true, convertList);
                 listDianostic.setAdapter(diagnosticsAdapter);
                 listDianostic.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
@@ -138,18 +145,7 @@ public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                DiagnosticsAdapter diagnosticsAdapter = new DiagnosticsAdapter(this, 0, convertList);
-                listDianostic.setAdapter(diagnosticsAdapter);
-                listDianostic.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Intent intent = new Intent(getApplicationContext(), TestActivity.class);
-                        intent.putExtra("id", convertList.get(position).getId());
-                        intent.putExtra("diagnostico", convertList.get(position).getSchema());
-                        intent.putExtra("dowload", "F");
-                        startActivity(intent);
-                    }
-                });
+
             }
             swichetdowload++;
             return true;
@@ -172,7 +168,7 @@ public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42
     public void onFindDocSuccess(Storage response) {
         progressDialog.dismiss();
         jsonDocList = response.getJsonDocList();
-        final List<Diagnostico> convertList = new ArrayList<>();
+        convertList = new ArrayList<>();
         try {
             for (int i = 0; i < jsonDocList.size(); i++) {
                 Storage.JSONDocument jsonDocument = jsonDocList.get(i);
@@ -191,18 +187,9 @@ public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42
         } catch (Exception e) {
             e.printStackTrace();
         }
-        DiagnosticsAdapter diagnosticsAdapter = new DiagnosticsAdapter(this, 0, convertList);
-        listDianostic.setAdapter(diagnosticsAdapter);
-        listDianostic.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getApplicationContext(), TestActivity.class);
-                intent.putExtra("id", convertList.get(position).getId());
-                intent.putExtra("diagnostico", convertList.get(position).getSchema());
-                startActivity(intent);
-            }
-        });
-        listDianostic.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
+        DiagnosticsAdapter diagnosticsAdapter = new DiagnosticsAdapter(getActivity(), 0, convertList);
+        setListAdapter(diagnosticsAdapter);
+        getListView().setOnItemClickListener(this);
     }
 
     @Override
@@ -227,18 +214,30 @@ public class DiagnosticsActivity extends AppCompatActivity implements AsyncApp42
      * @param msg the msg
      */
     public void createAlertDialog(String msg) {
-        AlertDialog.Builder alertbox = new AlertDialog.Builder(DiagnosticsActivity.this);
+        AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
         alertbox.setMessage(msg);
         alertbox.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             // do something when the button is clicked
             public void onClick(DialogInterface arg0, int arg1) {
-                closeActivity();
+
             }
         });
         alertbox.show();
     }
 
-    public void closeActivity() {
-        finish();
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Bundle bundle = new Bundle();
+        bundle.putString("id", convertList.get(position).getId());
+        bundle.putString("diagnostico", convertList.get(position).getSchema());
+
+        Fragment fragment = new TestFragment().newInstance(bundle);
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.replace(R.id.display,fragment);
+        transaction.commit();
+
+        AsignatureActivity.fab.setVisibility(View.INVISIBLE);
+
     }
 }

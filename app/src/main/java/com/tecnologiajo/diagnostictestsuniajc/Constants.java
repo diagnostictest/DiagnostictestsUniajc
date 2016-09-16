@@ -45,4 +45,10 @@ public class Constants {
 	 
  	/** The Constant UserName. */
  	static final String UserName = "TestUser";
+
+	/** The Constant UserName. */
+	static final String TESTBYCODE = "TESTBYCODE";
+
+	/** The Constant Host **/
+	static final String HOSTSERVER ="http://147.120.0.123:3000/"; //"http://10.10.28.142:3000/";
 }
