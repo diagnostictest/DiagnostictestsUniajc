@@ -10,15 +10,14 @@ import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
-import com.tecnologiajo.diagnostictestsuniajc.modelos.Diagnostico;
-import com.tecnologiajo.diagnostictestsuniajc.modelos.Result;
+import com.tecnologiajo.diagnostictestsuniajc.modelos.RequestResult;
 
 import java.util.List;
 
 /**
  * Created by ADMIN on 13/04/2016.
  */
-public class ResultAdapter extends ArrayAdapter<Result> {
+public class ResultAdapter extends ArrayAdapter<RequestResult> {
     // declare the color generator and drawable builder
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
     private TextDrawable.IBuilder mDrawableBuilder;
@@ -46,10 +45,10 @@ public class ResultAdapter extends ArrayAdapter<Result> {
         }
 
         // Get the data item for this position
-        final Result result = getItem(position);
+        final RequestResult result = getItem(position);
 
-        final Drawable drawable = result.getDrawable();
-        viewHolder.imageView.setImageDrawable(drawable);
+        //final Drawable drawable = result.getDrawable();
+       // viewHolder.imageView.setImageDrawable(drawable);
         viewHolder.textView.setText(result.getDescripcion());
 
         viewHolder.textView.setCompoundDrawablesWithIntrinsicBounds(null,

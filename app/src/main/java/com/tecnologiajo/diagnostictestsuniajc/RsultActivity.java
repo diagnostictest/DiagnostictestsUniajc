@@ -2,15 +2,12 @@ package com.tecnologiajo.diagnostictestsuniajc;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,27 +15,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
-import com.tecnologiajo.diagnostictestsuniajc.modelos.Diagnostico;
-import com.tecnologiajo.diagnostictestsuniajc.modelos.Result;
+import com.tecnologiajo.diagnostictestsuniajc.modelos.RequestResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.KeyStore;
 import java.util.ArrayList;
-import java.util.List;
 
 public class RsultActivity extends AppCompatActivity implements AsyncApp42ServiceApi.App42StorageServiceListener{
     /** The async service. */
@@ -255,7 +247,7 @@ public class RsultActivity extends AppCompatActivity implements AsyncApp42Servic
             try {
                 for(int i=0; i < jsonArray.length();i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    Result result = new Result();
+                    RequestResult result = new RequestResult();
                     result.setDescripcion(jsonObject.getString("descripcion"));
                     JSONObject jsonObject2  = new JSONObject(jsonObject.getString("respuesta1"));
                     if(jsonObject2.getBoolean("selected")&& jsonObject2.getBoolean("flag")){estadoRespuesta=true;}

@@ -2,10 +2,8 @@ package com.tecnologiajo.diagnostictestsuniajc;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -14,9 +12,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -40,7 +36,7 @@ import com.github.nkzawa.socketio.client.Socket;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.storage.Storage;
 import com.tecnologiajo.diagnostictestsuniajc.modelos.ContentManager;
-import com.tecnologiajo.diagnostictestsuniajc.modelos.Result;
+import com.tecnologiajo.diagnostictestsuniajc.modelos.RequestResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -104,6 +100,8 @@ public class TestFragment extends Fragment implements AsyncApp42ServiceApi.App42
     private JSONObject jsonEmit;
     private Socket mSocket;
     private String codigo;
+    private Boolean grouptest=false;
+    private String codigoser;
     {
         try {
             mSocket = IO.socket(Constants.HOSTSERVER);
@@ -207,9 +205,11 @@ public class TestFragment extends Fragment implements AsyncApp42ServiceApi.App42
             }
             assignQuestion();
         } else if(dowload.equals("A")){
+            grouptest=true;
             mSocket.connect();
 
-            codigo = getArguments().getString("codigo","");
+            codigo = getArguments().getString("codigo","")+"-clt";
+            codigoser = getArguments().getString("codigo","")+"-srv";
             jsonEmit = new JSONObject();
             try {
                 jsonEmit.put("name",getArguments().getString("name",""));
@@ -238,7 +238,7 @@ public class TestFragment extends Fragment implements AsyncApp42ServiceApi.App42
                 }
 
             }
-            mSocket.on(codigo, new Emitter.Listener() {
+            mSocket.on(codigoser, new Emitter.Listener() {
                 @Override
                 public void call(final Object... args) {
                     getActivity().runOnUiThread(new Runnable() {
@@ -361,18 +361,20 @@ public class TestFragment extends Fragment implements AsyncApp42ServiceApi.App42
     }
 
     public void sincronizatedTest(){
-        countDownTimer = new CountDownTimer(30000, 1000) {
-            public void onTick(long millisUntilFinished) {
-                timeTest.setText(String.valueOf((millisUntilFinished/1000)));
-            }
+        if(!grouptest) {
+            countDownTimer = new CountDownTimer(30000, 1000) {
+                public void onTick(long millisUntilFinished) {
+                    timeTest.setText(String.valueOf((millisUntilFinished / 1000)));
+                }
 
-            public void onFinish() {
-                txtnextlayout.setText("Incorrect!");
-                imgnextlayout.setImageResource(R.drawable.incorrect);
-                nextlayout.setBackgroundColor(Color.parseColor("#ae2929"));
-                viewAnimator.showNext();
-            }
-        }.start();
+                public void onFinish() {
+                    txtnextlayout.setText("Incorrect!");
+                    imgnextlayout.setImageResource(R.drawable.incorrect);
+                    nextlayout.setBackgroundColor(Color.parseColor("#ae2929"));
+                    viewAnimator.showNext();
+                }
+            }.start();
+        }
     }
     /** recorre el documento json extraido del servicio
      *  para esteblecer la pregunta con sus posible
@@ -401,24 +403,28 @@ public class TestFragment extends Fragment implements AsyncApp42ServiceApi.App42
 
 
     public void sendAnswer(String answer){
-        Result requestBody = new Result();
+        RequestResult requestBody = new RequestResult();
         requestBody.setDescripcion(answer);
         requestBody.setEstado(true);
+        requestBody.setGroupTest(codigoser);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.HOSTSERVER)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         RequestInterface request = retrofit.create(RequestInterface.class);
-        Call<Result> call = request.sednAnswer(requestBody);
-        call.enqueue(new Callback<Result>() {
+        Call<RequestResult> call = request.sendAnswer(requestBody);
+        call.enqueue(new Callback<RequestResult>() {
             @Override
-            public void onResponse(Call<Result> call, Response<Result> response) {
-                Result responseBody = response.body();
+            public void onResponse(Call<RequestResult> call, Response<RequestResult> response) {
+                //RequestResult responseBody = response.body();
+                //viewAnimator.showNext();
+                nextQuestion();
             }
 
             @Override
-            public void onFailure(Call<Result> call, Throwable t) {
+            public void onFailure(Call<RequestResult> call, Throwable t) {
+                Toast.makeText(getActivity(), t.getMessage(),Toast.LENGTH_LONG);
             }
         });
     }
@@ -467,7 +473,7 @@ public class TestFragment extends Fragment implements AsyncApp42ServiceApi.App42
     }
 
     public void sendSelected(){
-        if(!codigo.isEmpty()) {
+        /*if(!codigo.isEmpty()) {
             try {
                 jsonEmit.put("termined", true);
                 jsonEmit.put("isadd",false);
@@ -476,7 +482,8 @@ public class TestFragment extends Fragment implements AsyncApp42ServiceApi.App42
                 e.printStackTrace();
             }
 
-        }
+        }*/
+
     }
 
     /** selecciona repuesta opcion 1 */
@@ -494,10 +501,13 @@ public class TestFragment extends Fragment implements AsyncApp42ServiceApi.App42
                 nextlayout.setBackgroundColor(Color.parseColor("#ae2929"));
             }
             jsonObject1.put("respuesta1", jsonObject);
-            countDownTimer.cancel();
-            viewAnimator.showNext();
-            sendSelected();
-            //sendAnswer("1");
+            if(!grouptest) {
+                countDownTimer.cancel();
+            }
+            sendAnswer("1");
+
+            //sendSelected();
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -517,10 +527,12 @@ public class TestFragment extends Fragment implements AsyncApp42ServiceApi.App42
                 nextlayout.setBackgroundColor(Color.parseColor("#ae2929"));
             }
             jsonObject1.put("respuesta2", jsonObject);
-            countDownTimer.cancel();
-            viewAnimator.showNext();
-            sendSelected();
-            //sendAnswer("2");
+            if(!grouptest) {
+                countDownTimer.cancel();
+            }
+
+            //sendSelected();
+            sendAnswer("2");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -540,10 +552,12 @@ public class TestFragment extends Fragment implements AsyncApp42ServiceApi.App42
                 nextlayout.setBackgroundColor(Color.parseColor("#ae2929"));
             }
             jsonObject1.put("respuesta3", jsonObject);
-            countDownTimer.cancel();
-            viewAnimator.showNext();
-            sendSelected();
-            //sendAnswer("3");
+            if(!grouptest) {
+                countDownTimer.cancel();
+            }
+
+            //sendSelected();
+            sendAnswer("3");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -563,10 +577,12 @@ public class TestFragment extends Fragment implements AsyncApp42ServiceApi.App42
                 nextlayout.setBackgroundColor(Color.parseColor("#ae2929"));
             }
             jsonObject1.put("respuesta4", jsonObject);
-            countDownTimer.cancel();
+            if(!grouptest) {
+                countDownTimer.cancel();
+            }
             viewAnimator.showNext();
-            sendSelected();
-            //sendAnswer("4");
+            //sendSelected();
+            sendAnswer("4");
         } catch (JSONException e) {
             e.printStackTrace();
         }

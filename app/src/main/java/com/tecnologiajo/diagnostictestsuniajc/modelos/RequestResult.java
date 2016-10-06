@@ -5,18 +5,12 @@ import android.graphics.drawable.Drawable;
 /**
  * Created by ADMIN on 13/04/2016.
  */
-public class Result {
+public class RequestResult {
     public String Descripcion;
     public Boolean Estado; /** true=ganado, false= perdido */
-    private Drawable drawable;
+    private String groupTest;
 
-    public Result() {
-    }
 
-    public Result(String descripcion, Boolean estado) {
-        Descripcion = descripcion;
-        Estado = estado;
-    }
 
     public String getDescripcion() {
         return Descripcion;
@@ -34,11 +28,11 @@ public class Result {
         Estado = estado;
     }
 
-    public Drawable getDrawable() {
-        return drawable;
+    public String getGroupTest() {
+        return groupTest;
     }
 
-    public void setDrawable(Drawable drawable) {
-        this.drawable = drawable;
+    public void setGroupTest(String groupTest) {
+        this.groupTest = groupTest;
     }
 }
