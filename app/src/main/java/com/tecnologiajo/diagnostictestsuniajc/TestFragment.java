@@ -100,8 +100,10 @@ public class TestFragment extends Fragment implements AsyncApp42ServiceApi.App42
     private JSONObject jsonEmit;
     private Socket mSocket;
     private String codigo;
+    private String device;
     private Boolean grouptest=false;
     private String codigoser;
+    private Boolean begin=false;
     {
         try {
             mSocket = IO.socket(Constants.HOSTSERVER);
@@ -210,6 +212,7 @@ public class TestFragment extends Fragment implements AsyncApp42ServiceApi.App42
 
             codigo = getArguments().getString("codigo","")+"-clt";
             codigoser = getArguments().getString("codigo","")+"-srv";
+            device = getArguments().getString("device","");
             jsonEmit = new JSONObject();
             try {
                 jsonEmit.put("name",getArguments().getString("name",""));
@@ -219,8 +222,29 @@ public class TestFragment extends Fragment implements AsyncApp42ServiceApi.App42
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            mSocket.on(codigoser, new Emitter.Listener() {
+                @Override
+                public void call(final Object... args) {
+                    getActivity().runOnUiThread(new Runnable() {
 
-            mSocket.emit(codigo,jsonEmit);
+                        @Override
+                        public void run() {
+                            JSONObject data = (JSONObject) args[0];
+                            try {
+                                if(data.getBoolean("begin")) {
+                                    begin=true;
+                                }
+                                if(data.getBoolean("isnext")) {
+                                    nextQuestion();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            });
+
             progressDialog = ProgressDialog.show(getActivity(), "", "Searching..");
             progressDialog.setCancelable(true);
             btnnextlayout.setVisibility(View.INVISIBLE);
@@ -238,25 +262,7 @@ public class TestFragment extends Fragment implements AsyncApp42ServiceApi.App42
                 }
 
             }
-            mSocket.on(codigoser, new Emitter.Listener() {
-                @Override
-                public void call(final Object... args) {
-                    getActivity().runOnUiThread(new Runnable() {
 
-                        @Override
-                        public void run() {
-                            JSONObject data = (JSONObject) args[0];
-                            try {
-                                if(data.getBoolean("isnext")) {
-                                    nextQuestion();
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                }
-            });
         } else {
             progressDialog = ProgressDialog.show(getActivity(), "", "Searching..");
             progressDialog.setCancelable(true);
@@ -270,7 +276,6 @@ public class TestFragment extends Fragment implements AsyncApp42ServiceApi.App42
         jsonArrayResult = new JSONArray();
         return view;
     }
-
 
     public void TestType(String opt,String texto,String uri){
 
@@ -401,12 +406,12 @@ public class TestFragment extends Fragment implements AsyncApp42ServiceApi.App42
         }
     }
 
-
     public void sendAnswer(String answer){
         RequestResult requestBody = new RequestResult();
         requestBody.setDescripcion(answer);
-        requestBody.setEstado(true);
+        requestBody.setEstado(false);
         requestBody.setGroupTest(codigoser);
+        requestBody.setDevice(device);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.HOSTSERVER)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -417,14 +422,13 @@ public class TestFragment extends Fragment implements AsyncApp42ServiceApi.App42
         call.enqueue(new Callback<RequestResult>() {
             @Override
             public void onResponse(Call<RequestResult> call, Response<RequestResult> response) {
-                //RequestResult responseBody = response.body();
-                //viewAnimator.showNext();
-                nextQuestion();
+                viewAnimator.showNext();
             }
 
             @Override
             public void onFailure(Call<RequestResult> call, Throwable t) {
-                Toast.makeText(getActivity(), t.getMessage(),Toast.LENGTH_LONG);
+                Toast toast=Toast.makeText(getActivity(), t.getMessage(),Toast.LENGTH_LONG);
+                toast.show();
             }
         });
     }
@@ -471,138 +475,118 @@ public class TestFragment extends Fragment implements AsyncApp42ServiceApi.App42
             }
         }
     }
-
-    public void sendSelected(){
-        /*if(!codigo.isEmpty()) {
+    /** selecciona repuesta opcion 1 */
+    public void Answer1(){
+        if(begin) {
             try {
-                jsonEmit.put("termined", true);
-                jsonEmit.put("isadd",false);
-                mSocket.emit(codigo, jsonEmit);
+                JSONObject jsonObject = new JSONObject(jsonObject1.getString("respuesta1"));
+                jsonObject.put("selected", true);
+                if (jsonObject.getBoolean("flag")) {
+                    txtnextlayout.setText("Correct!");
+                    imgnextlayout.setImageResource(R.drawable.correct);
+                    nextlayout.setBackgroundColor(Color.parseColor("#FF1A831A"));
+                } else {
+                    txtnextlayout.setText("Incorrect!");
+                    imgnextlayout.setImageResource(R.drawable.incorrect);
+                    nextlayout.setBackgroundColor(Color.parseColor("#ae2929"));
+                }
+                jsonObject1.put("respuesta1", jsonObject);
+                if (!grouptest) {
+                    countDownTimer.cancel();
+                }
+                sendAnswer("1");
+
+                //sendSelected();
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-        }*/
-
-    }
-
-    /** selecciona repuesta opcion 1 */
-    public void Answer1(){
-        try {
-            JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta1"));
-            jsonObject.put("selected", true);
-            if(jsonObject.getBoolean("flag")){
-                txtnextlayout.setText("Correct!");
-                imgnextlayout.setImageResource(R.drawable.correct);
-                nextlayout.setBackgroundColor(Color.parseColor("#FF1A831A"));
-            }else{
-                txtnextlayout.setText("Incorrect!");
-                imgnextlayout.setImageResource(R.drawable.incorrect);
-                nextlayout.setBackgroundColor(Color.parseColor("#ae2929"));
-            }
-            jsonObject1.put("respuesta1", jsonObject);
-            if(!grouptest) {
-                countDownTimer.cancel();
-            }
-            sendAnswer("1");
-
-            //sendSelected();
-
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
     }
     /** selecciona repuesta opcion 2 */
     public void Answer2(){
-        try {
-            JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta2"));
-            jsonObject.put("selected", true);
-            if(jsonObject.getBoolean("flag")){
-                txtnextlayout.setText("Correct!");
-                imgnextlayout.setImageResource(R.drawable.correct);
-                nextlayout.setBackgroundColor(Color.parseColor("#FF1A831A"));
-            }else {
-                txtnextlayout.setText("Incorrect!");
-                imgnextlayout.setImageResource(R.drawable.incorrect);
-                nextlayout.setBackgroundColor(Color.parseColor("#ae2929"));
-            }
-            jsonObject1.put("respuesta2", jsonObject);
-            if(!grouptest) {
-                countDownTimer.cancel();
-            }
+        if(begin) {
+            try {
+                JSONObject jsonObject = new JSONObject(jsonObject1.getString("respuesta2"));
+                jsonObject.put("selected", true);
+                if (jsonObject.getBoolean("flag")) {
+                    txtnextlayout.setText("Correct!");
+                    imgnextlayout.setImageResource(R.drawable.correct);
+                    nextlayout.setBackgroundColor(Color.parseColor("#FF1A831A"));
+                } else {
+                    txtnextlayout.setText("Incorrect!");
+                    imgnextlayout.setImageResource(R.drawable.incorrect);
+                    nextlayout.setBackgroundColor(Color.parseColor("#ae2929"));
+                }
+                jsonObject1.put("respuesta2", jsonObject);
+                if (!grouptest) {
+                    countDownTimer.cancel();
+                }
 
-            //sendSelected();
-            sendAnswer("2");
-        } catch (JSONException e) {
-            e.printStackTrace();
+                //sendSelected();
+                sendAnswer("2");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
     /** selecciona repuesta opcion 3 */
     public void Answer3(){
-        try {
-            JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta3"));
-            jsonObject.put("selected", true);
-            if(jsonObject.getBoolean("flag")){
-                txtnextlayout.setText("Correct!");
-                imgnextlayout.setImageResource(R.drawable.correct);
-                nextlayout.setBackgroundColor(Color.parseColor("#FF1A831A"));
-            }else{
-                txtnextlayout.setText("Incorrect!");
-                imgnextlayout.setImageResource(R.drawable.incorrect);
-                nextlayout.setBackgroundColor(Color.parseColor("#ae2929"));
-            }
-            jsonObject1.put("respuesta3", jsonObject);
-            if(!grouptest) {
-                countDownTimer.cancel();
-            }
+        if(begin) {
+            try {
+                JSONObject jsonObject = new JSONObject(jsonObject1.getString("respuesta3"));
+                jsonObject.put("selected", true);
+                if (jsonObject.getBoolean("flag")) {
+                    txtnextlayout.setText("Correct!");
+                    imgnextlayout.setImageResource(R.drawable.correct);
+                    nextlayout.setBackgroundColor(Color.parseColor("#FF1A831A"));
+                } else {
+                    txtnextlayout.setText("Incorrect!");
+                    imgnextlayout.setImageResource(R.drawable.incorrect);
+                    nextlayout.setBackgroundColor(Color.parseColor("#ae2929"));
+                }
+                jsonObject1.put("respuesta3", jsonObject);
+                if (!grouptest) {
+                    countDownTimer.cancel();
+                }
 
-            //sendSelected();
-            sendAnswer("3");
-        } catch (JSONException e) {
-            e.printStackTrace();
+                //sendSelected();
+                sendAnswer("3");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
     /** selecciona repuesta opcion 4 */
     public void Answer4(){
-        try {
-            JSONObject jsonObject  = new JSONObject(jsonObject1.getString("respuesta4"));
-            jsonObject.put("selected", true);
-            if(jsonObject.getBoolean("flag")){
-                txtnextlayout.setText("Correct!");
-                imgnextlayout.setImageResource(R.drawable.correct);
-                nextlayout.setBackgroundColor(Color.parseColor("#FF1A831A"));
-            }else{
-                txtnextlayout.setText("Incorrect!");
-                imgnextlayout.setImageResource(R.drawable.incorrect);
-                nextlayout.setBackgroundColor(Color.parseColor("#ae2929"));
+        if(begin) {
+            try {
+                JSONObject jsonObject = new JSONObject(jsonObject1.getString("respuesta4"));
+                jsonObject.put("selected", true);
+                if (jsonObject.getBoolean("flag")) {
+                    txtnextlayout.setText("Correct!");
+                    imgnextlayout.setImageResource(R.drawable.correct);
+                    nextlayout.setBackgroundColor(Color.parseColor("#FF1A831A"));
+                } else {
+                    txtnextlayout.setText("Incorrect!");
+                    imgnextlayout.setImageResource(R.drawable.incorrect);
+                    nextlayout.setBackgroundColor(Color.parseColor("#ae2929"));
+                }
+                jsonObject1.put("respuesta4", jsonObject);
+                if (!grouptest) {
+                    countDownTimer.cancel();
+                }
+                viewAnimator.showNext();
+                //sendSelected();
+                sendAnswer("4");
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-            jsonObject1.put("respuesta4", jsonObject);
-            if(!grouptest) {
-                countDownTimer.cancel();
-            }
-            viewAnimator.showNext();
-            //sendSelected();
-            sendAnswer("4");
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
     }
     @Override
     public void onDocumentInserted(Storage response) {
-        /*if(response.isFromCache()){
-            Diagnosticos diagnosticos= new Diagnosticos(this);
-            try {
-                jsonDiagnostico.put("registrado",false);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            diagnosticos.insertarDIAGNOSTICOS(Id, jsonDiagnostico.toString());
-            progressDialog.dismiss();
-            Intent intent = new Intent(getApplicationContext(),RsultActivity.class);
-            intent.putExtra("result", jsonDiagnostico.toString());
-            startActivity(intent);
 
-        }else{*/
             progressDialog.dismiss();
             Intent intent = new Intent(getActivity(),RsultActivity.class);
             intent.putExtra("result",jsonDiagnostico.toString());
@@ -610,7 +594,6 @@ public class TestFragment extends Fragment implements AsyncApp42ServiceApi.App42
             intent.putExtra("id", Id);
             intent.putExtra("dowload", dowload_service);
             startActivity(intent);
-        //}
 
     }
 
@@ -660,11 +643,13 @@ public class TestFragment extends Fragment implements AsyncApp42ServiceApi.App42
         progressDialog.dismiss();
         createAlertDialog("Exception Occurred : "+ ex.getMessage());
     }
+
     @Override
     public void onFindDocFailed(App42Exception ex) {
         progressDialog.dismiss();
         createAlertDialog("Exception Occurred : "+ ex.getMessage());
     }
+
     @Override
     public void onUpdateDocFailed(App42Exception ex) {
 

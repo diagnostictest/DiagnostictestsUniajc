@@ -12,4 +12,7 @@ public interface RequestInterface {
 
     @POST("send")
     Call<RequestResult> sendAnswer(@Body RequestResult body);
+
+    @POST("register")
+    Call<RequestResult> register(@Body RequestResult body);
 }

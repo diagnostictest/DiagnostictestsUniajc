@@ -49,12 +49,19 @@ import com.shephertz.app42.paas.sdk.android.storage.Storage;
 import com.tecnologiajo.diagnostictestsuniajc.modelos.Asignature;
 import com.tecnologiajo.diagnostictestsuniajc.modelos.ContentManager;
 import com.tecnologiajo.diagnostictestsuniajc.modelos.Diagnostico;
+import com.tecnologiajo.diagnostictestsuniajc.modelos.RequestResult;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  *
@@ -88,11 +95,8 @@ public class AsignatureActivity extends AppCompatActivity {
             bundle.putString("name",getIntent().getStringExtra("name"));
             bundle.putString("device",getIntent().getStringExtra("device"));
             bundle.putString("dowload", "A");
-            Fragment fragment = new TestFragment().newInstance(bundle);
-            FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction transaction = fm.beginTransaction();
-            transaction.replace(R.id.display, fragment);
-            transaction.commit();
+            register((getIntent().getStringExtra("codigo")+"-srv"),bundle);
+
         }else{
             Fragment fragment = new AsignatureFragmentList();
             FragmentManager fm = getSupportFragmentManager();
@@ -202,6 +206,37 @@ public class AsignatureActivity extends AppCompatActivity {
         });
 
         builder.show();
+    }
+
+    public void register(String codigoser, final Bundle bundle){
+        RequestResult requestBody = new RequestResult();
+        requestBody.setDescripcion("se ha registrado");
+        requestBody.setEstado(true);
+        requestBody.setGroupTest(codigoser);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.HOSTSERVER)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        RequestInterface request = retrofit.create(RequestInterface.class);
+        Call<RequestResult> call = request.register(requestBody);
+        call.enqueue(new Callback<RequestResult>() {
+            @Override
+            public void onResponse(Call<RequestResult> call, Response<RequestResult> response) {
+                //RequestResult responseBody = response.body();
+                Fragment fragment = new TestFragment().newInstance(bundle);
+                FragmentManager fm = getSupportFragmentManager();
+                FragmentTransaction transaction = fm.beginTransaction();
+                transaction.replace(R.id.display, fragment);
+                transaction.commit();
+            }
+
+            @Override
+            public void onFailure(Call<RequestResult> call, Throwable t) {
+                Toast toast= Toast.makeText(getApplication(), t.getMessage(),Toast.LENGTH_LONG);
+                toast.show();
+            }
+        });
     }
 
     public static class AsignatureFragmentList extends ListFragment implements AdapterView.OnItemClickListener, AsyncApp42ServiceApi.App42StorageServiceListener{

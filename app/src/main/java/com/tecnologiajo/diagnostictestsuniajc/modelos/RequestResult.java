@@ -9,7 +9,7 @@ public class RequestResult {
     public String Descripcion;
     public Boolean Estado; /** true=ganado, false= perdido */
     private String groupTest;
-
+    private String device;
 
 
     public String getDescripcion() {
@@ -34,5 +34,13 @@ public class RequestResult {
 
     public void setGroupTest(String groupTest) {
         this.groupTest = groupTest;
+    }
+
+    public String getDevice() {
+        return device;
+    }
+
+    public void setDevice(String device) {
+        this.device = device;
     }
 }

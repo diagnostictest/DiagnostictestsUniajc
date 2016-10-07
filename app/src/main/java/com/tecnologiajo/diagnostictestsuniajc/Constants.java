@@ -50,5 +50,5 @@ public class Constants {
 	static final String TESTBYCODE = "TESTBYCODE";
 
 	/** The Constant Host **/
-	static final String HOSTSERVER ="http://147.120.0.123:3000/";//"http://192.168.0.20:3000/";//; //
+	static final String HOSTSERVER ="http://diagnostictest-solutionsao.rhcloud.com/";//"http://147.120.0.123:3000/";//"http://192.168.0.20:3000/";//; //
 }
